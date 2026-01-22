@@ -1,0 +1,858 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cần Thơ MotoTrip: Phiên Bản Tự Túc</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;900&display=swap"
+      rel="stylesheet" />
+    <style>
+      /* <!-- Chosen Palette: Asphalt & Road (Slate Gray, Warning Yellow, Sky Blue) --> */
+      /* <!-- Application Structure: Optimized for 2 guys on motorbikes with custom data sources. --> */
+
+      body {
+        font-family: 'Be Vietnam Pro', sans-serif;
+        background-color: #f8fafc;
+        color: #0f172a;
+      }
+
+      .chart-container {
+        position: relative;
+        width: 100%;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        height: 300px;
+        max-height: 400px;
+      }
+
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(8px);
+        border: 1px solid #e2e8f0;
+      }
+
+      .food-card-img {
+        transition: transform 0.5s ease;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .food-card:hover .food-card-img {
+        transform: scale(1.05);
+      }
+
+      .img-skeleton {
+        background-color: #cbd5e1;
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      /* Checkbox custom style */
+      .biker-check:checked + label {
+        text-decoration: line-through;
+        color: #94a3b8;
+      }
+
+      /* Chatwidget Styles */
+      .chat-widget {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+      }
+
+      .chat-button {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        font-size: 30px;
+      }
+
+      .chat-button:hover {
+        transform: scale(1.1);
+      }
+
+      .chat-window {
+        width: 350px;
+        height: 500px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        margin-bottom: 20px;
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+      }
+
+      .chat-header {
+        background: #0f172a;
+        color: white;
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .chat-messages {
+        flex-grow: 1;
+        padding: 15px;
+        overflow-y: auto;
+        background: #f1f5f9;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .message {
+        max-width: 80%;
+        padding: 10px 15px;
+        border-radius: 15px;
+        font-size: 14px;
+        line-height: 1.4;
+      }
+
+      .message.user {
+        background: #3b82f6;
+        color: white;
+        align-self: flex-end;
+        border-bottom-right-radius: 2px;
+      }
+
+      .message.ai {
+        background: white;
+        color: #1e293b;
+        align-self: flex-start;
+        border-bottom-left-radius: 2px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      }
+
+      .chat-input-area {
+        padding: 15px;
+        background: white;
+        border-top: 1px solid #e2e8f0;
+        display: flex;
+        gap: 10px;
+      }
+
+      .chat-input-area input {
+        flex-grow: 1;
+        padding: 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 20px;
+        outline: none;
+      }
+
+      .chat-input-area input:focus {
+        border-color: #f59e0b;
+      }
+
+      .typing-indicator span {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        background-color: #94a3b8;
+        border-radius: 50%;
+        animation: typing 1s infinite ease-in-out;
+        margin-right: 3px;
+      }
+
+      .typing-indicator span:nth-child(1) {
+        animation-delay: 0s;
+      }
+      .typing-indicator span:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .typing-indicator span:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+
+      @keyframes typing {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-5px);
+        }
+      }
+
+      /* Modal for Food Review */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 2000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(4px);
+      }
+      .modal-content {
+        background: white;
+        width: 90%;
+        max-width: 500px;
+        border-radius: 20px;
+        padding: 25px;
+        position: relative;
+        max-height: 80vh;
+        overflow-y: auto;
+      }
+
+      /* Button Icon Styles */
+      .btn-icon {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: all 0.2s;
+      }
+      .btn-icon:hover {
+        transform: translateY(-1px);
+      }
+    </style>
+  </head>
+  <body class="antialiased min-h-screen flex flex-col">
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur shadow-sm border-b border-gray-200">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16 items-center">
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">🏍️</span>
+            <div class="text-xl font-bold text-slate-800 tracking-tight">
+              Moto<span class="text-amber-500">Trip</span>
+            </div>
+          </div>
+          <div class="hidden md:flex space-x-8">
+            <button
+              onclick="scrollToSection('overview')"
+              class="text-slate-600 hover:text-amber-600 font-bold transition">
+              Lộ Trình
+            </button>
+            <button
+              onclick="scrollToSection('checklist')"
+              class="text-slate-600 hover:text-amber-600 font-bold transition">
+              Kiểm Tra Xe
+            </button>
+            <button
+              onclick="scrollToSection('itinerary')"
+              class="text-slate-600 hover:text-amber-600 font-bold transition">
+              Lịch Trình
+            </button>
+            <button
+              onclick="scrollToSection('food')"
+              class="text-slate-600 hover:text-amber-600 font-bold transition">
+              Ăn Chơi (Custom)
+            </button>
+          </div>
+          <button class="md:hidden text-2xl" onclick="toggleMobileNav()">☰</button>
+        </div>
+      </div>
+      <div id="mobile-nav" class="hidden md:hidden bg-white border-b border-gray-200 p-4 space-y-3">
+        <button
+          onclick="scrollToSection('overview')"
+          class="block w-full text-left text-slate-700 font-bold">
+          Lộ Trình
+        </button>
+        <button
+          onclick="scrollToSection('checklist')"
+          class="block w-full text-left text-slate-700 font-bold">
+          Kiểm Tra Xe
+        </button>
+        <button
+          onclick="scrollToSection('itinerary')"
+          class="block w-full text-left text-slate-700 font-bold">
+          Lịch Trình
+        </button>
+        <button
+          onclick="scrollToSection('food')"
+          class="block w-full text-left text-slate-700 font-bold">
+          Ăn Chơi
+        </button>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="overview" class="pt-10 pb-8 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full">
+      <div class="text-center mb-10">
+        <span
+          class="inline-block py-1 px-3 rounded bg-amber-100 text-amber-800 text-xs font-black uppercase tracking-wider mb-3"
+          >Lịch Trình Tự Túc 2026</span
+        >
+        <h1 class="text-4xl sm:text-6xl font-black text-slate-900 mb-4 tracking-tighter">
+          PHƯỢT
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-600"
+            >CẦN THƠ</span
+          >
+        </h1>
+        <p class="text-lg text-slate-600 max-w-2xl mx-auto font-medium">
+          Dữ liệu địa điểm đã được cập nhật theo yêu cầu riêng của bạn.<br />
+          Xe máy sẵn sàng, lên đường thôi!
+        </p>
+      </div>
+
+      <!-- Quick Stats Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div class="glass-panel p-6 rounded-xl border-l-4 border-slate-700 shadow-sm">
+          <div class="text-3xl mb-2">⛽</div>
+          <h3 class="font-bold text-slate-800 text-lg">Xăng & Cầu Đường</h3>
+          <p class="text-slate-600 text-sm mt-1">
+            ~200k tiền xăng (2 chiều) + Cà phê võng nghỉ lưng dọc đường.
+          </p>
+        </div>
+        <div class="glass-panel p-6 rounded-xl border-l-4 border-amber-500 shadow-sm">
+          <div class="text-3xl mb-2">📍</div>
+          <h3 class="font-bold text-slate-800 text-lg">Địa Điểm Đã Chọn</h3>
+          <p class="text-slate-600 text-sm mt-1">
+            Lẩu mắm Kiều Trinh, Bánh cống Cô Út, Phố nướng 102...
+          </p>
+        </div>
+        <div class="glass-panel p-6 rounded-xl border-l-4 border-blue-500 shadow-sm">
+          <div class="text-3xl mb-2">😎</div>
+          <h3 class="font-bold text-slate-800 text-lg">Trang Phục</h3>
+          <p class="text-slate-600 text-sm mt-1">
+            Áo khoác gió, kính râm, găng tay. Nắng miền Tây rất gắt.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Biker Checklist -->
+    <section id="checklist" class="py-8 bg-slate-900 text-white w-full">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+          <span>🔧</span> Bảo Dưỡng Trước Khi Đi (Bắt Buộc)
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div
+            class="flex items-center gap-3 p-3 bg-slate-800 rounded border border-slate-700 hover:border-amber-500 transition cursor-pointer"
+            onclick="document.getElementById('check1').click()">
+            <input type="checkbox" id="check1" class="biker-check w-5 h-5 accent-amber-500" />
+            <label for="check1" class="cursor-pointer select-none"
+              >Thay nhớt mới (Nếu đã đi >1500km)</label
+            >
+          </div>
+          <div
+            class="flex items-center gap-3 p-3 bg-slate-800 rounded border border-slate-700 hover:border-amber-500 transition cursor-pointer"
+            onclick="document.getElementById('check2').click()">
+            <input type="checkbox" id="check2" class="biker-check w-5 h-5 accent-amber-500" />
+            <label for="check2" class="cursor-pointer select-none"
+              >Kiểm tra lốp xe & thắng (Phanh)</label
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Itinerary Section -->
+    <section id="itinerary" class="py-12 bg-white w-full">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6">
+        <div class="mb-10 text-center">
+          <h2 class="text-3xl font-black text-slate-900 uppercase">Lịch Trình (Đã cập nhật)</h2>
+          <p class="text-slate-500 mt-1">Kết hợp các địa điểm bạn đã cung cấp.</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex justify-center mb-8 space-x-2 sm:space-x-4">
+          <button
+            onclick="switchDay(1)"
+            id="tab-day1"
+            class="px-5 py-2 rounded font-bold transition bg-amber-500 text-white shadow-md transform scale-105 border-2 border-amber-500">
+            Ngày 1 (31/1)
+          </button>
+          <button
+            onclick="switchDay(2)"
+            id="tab-day2"
+            class="px-5 py-2 rounded font-bold transition bg-slate-100 text-slate-600 hover:bg-slate-200 border-2 border-transparent">
+            Ngày 2 (1/2)
+          </button>
+          <button
+            onclick="switchDay(3)"
+            id="tab-day3"
+            class="px-5 py-2 rounded font-bold transition bg-slate-100 text-slate-600 hover:bg-slate-200 border-2 border-transparent">
+            Ngày 3 (2/2)
+          </button>
+        </div>
+
+        <div
+          class="relative border-l-4 border-slate-200 ml-4 md:ml-6 pl-8 space-y-8"
+          id="timeline-content">
+          <!-- Content injected via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Food Section (Custom Data) -->
+    <section id="food" class="py-12 bg-slate-50 w-full">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="text-center mb-10">
+          <h2 class="text-3xl font-black text-slate-900 uppercase">Trạm Tiếp Thực (Custom)</h2>
+          <p class="text-slate-600 mt-2">Danh sách quán từ file của bạn (Đầy đủ Map & TikTok).</p>
+
+          <div class="flex justify-center gap-2 mt-5">
+            <button
+              onclick="filterFood('all')"
+              class="food-filter-btn px-5 py-2 rounded font-bold bg-slate-800 text-white transition shadow hover:bg-slate-700">
+              Tất cả
+            </button>
+            <button
+              onclick="filterFood('main')"
+              class="food-filter-btn px-5 py-2 rounded font-bold bg-white text-slate-600 border border-slate-300 transition hover:bg-slate-100">
+              Ăn Chính/Nhậu
+            </button>
+            <button
+              onclick="filterFood('snack')"
+              class="food-filter-btn px-5 py-2 rounded font-bold bg-white text-slate-600 border border-slate-300 transition hover:bg-slate-100">
+              Ăn Vặt
+            </button>
+          </div>
+        </div>
+
+        <!-- Grid -->
+        <div id="food-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Budget Section -->
+    <section class="py-12 bg-white w-full border-t border-slate-200">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6">
+        <h2 class="text-2xl font-bold text-slate-900 text-center mb-4">
+          Chia "Cam-pu-chia" (Tổng 2 người)
+        </h2>
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+          <div class="chart-container mx-auto">
+            <canvas id="budgetChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Chat Widget -->
+    <div class="chat-widget">
+      <div class="chat-window" id="chatWindow">
+        <div class="chat-header">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🤠</span>
+            <div>
+              <div class="font-bold text-sm">Thổ Địa Cần Thơ AI</div>
+              <div class="text-xs text-slate-300">Sẵn sàng hỗ trợ</div>
+            </div>
+          </div>
+          <button onclick="toggleChat()" class="text-white hover:text-amber-400">✕</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+          <div class="message ai">
+            Chào 2 đại ca! Dữ liệu quán xá đã được cập nhật từ file Excel của mấy anh rồi. Cần tìm
+            đường hay hỏi gì cứ hú tui nghen! 🍻
+          </div>
+        </div>
+        <div class="chat-input-area">
+          <input
+            type="text"
+            id="userQuery"
+            placeholder="Hỏi gì đó..."
+            onkeypress="handleKeyPress(event)" />
+          <button
+            onclick="sendMessage()"
+            class="bg-amber-500 text-white p-2 rounded-full hover:bg-amber-600 w-10 h-10 flex items-center justify-center">
+            ➤
+          </button>
+        </div>
+      </div>
+      <div class="chat-button" onclick="toggleChat()">💬</div>
+    </div>
+
+    <!-- Modal for Food Review -->
+    <div class="modal-overlay" id="reviewModal" onclick="closeReview(event)">
+      <div class="modal-content">
+        <div class="flex justify-between items-center mb-4 border-b pb-2">
+          <h3 class="text-xl font-bold text-slate-800" id="reviewTitle">Review Món Ăn</h3>
+          <button onclick="closeReview(null)" class="text-slate-500 hover:text-red-500 text-2xl">
+            ×
+          </button>
+        </div>
+        <div id="reviewContent" class="text-slate-600 leading-relaxed">
+          <!-- Content from AI -->
+        </div>
+      </div>
+    </div>
+
+    <footer class="bg-slate-900 text-slate-400 py-8 text-center mt-auto">
+      <p class="mb-2 text-lg text-white font-bold">Thượng Lộ Bình An nhé 2 Bro! 🏍️💨</p>
+      <p class="text-xs">Powered by Gemini API ✦ Custom Data</p>
+    </footer>
+
+    <script>
+      // --- Gemini API Configuration ---
+      const apiKey = ''; // Runtime environment provides this
+
+      // Helper to call Gemini
+      async function callGemini(prompt, systemInstruction = '') {
+        if (!apiKey) {
+          return 'Chưa có API Key. (Chế độ giả lập: Món này ngon lắm đại ca, nên thử!)';
+        }
+
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+        const payload = {
+          contents: [{ parts: [{ text: prompt }] }],
+          systemInstruction: { parts: [{ text: systemInstruction }] }
+        };
+
+        try {
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (!response.ok) throw new Error('API Error');
+          const data = await response.json();
+          return data.candidates?.[0]?.content?.parts?.[0]?.text || 'Lỗi mạng rồi đại ca ơi!';
+        } catch (error) {
+          console.error('Gemini Error:', error);
+          return 'Lỗi kết nối vệ tinh.';
+        }
+      }
+
+      // --- Custom Data from CSV ---
+      const foodData = [
+        {
+          name: 'Phố Nướng 102',
+          type: 'main',
+          address: '16B Đ. Trần Hoàng Na, An Bình, Ninh Kiều, Cần Thơ',
+          mapLink: 'https://www.google.com/maps/search/?api=1&query=Phố+Nướng+102+Cần+Thơ',
+          tiktok: null, // No link in CSV snippet
+          desc: 'Quán nướng bình dân, không gian rộng rãi, thích hợp nhậu lai rai.',
+          img: 'https://lh4.googleusercontent.com/proxy/e6DHC5NAGhX6fnn0h2BIIbv4nKDThMtn4JbeJMu6k1aBpq6U22e63aMA5Io8kJyThrWCcqoWVID2WOVgdiuCTHR4tJrb3HEmzhMsUot4QrnNTcA6G9E_8PrIyyiCkYeQqSjQugX0HjuQ21Tpt9c'
+        },
+        {
+          name: 'Lẩu Mắm Kiều Trinh',
+          type: 'main',
+          address: '26 Đ. Trần Khánh Dư, Xuân Khánh, Ninh Kiều, Cần Thơ',
+          mapLink: 'https://www.google.com/maps/search/?api=1&query=Lẩu+mắm+Kiều+Trinh+Cần+Thơ',
+          tiktok: 'https://www.tiktok.com/@embedichoi0/video/7593964647628197138',
+          desc: 'Lẩu mắm đậm đà, rau sống tươi ngon. Điểm đến nổi tiếng.',
+          img: 'https://lh3.googleusercontent.com/gps-cs-s/AG0ilSyzWpwt9sxrvlBjOWekrEeRQOfTG-_oyVdnfRUCqjy_diTarvlBrklR3eAAXGzR58UsEj4-ZBL0ZQUL7bJLcl2ecJA1oMCbPVPIMzHWM6FumWDIAApEwomlbqjANQBpMViqJV_xZX3QswA=s1360-w1360-h1020-rw'
+        },
+        {
+          name: 'Bánh Cống Cô Út',
+          type: 'snack',
+          address: '86/38 Lý Tự Trọng, Tân An, Ninh Kiều, Cần Thơ',
+          mapLink:
+            'https://www.google.com/maps/search/?api=1&query=Bánh+cống+cô+út+Nguyễn+Trãi+Cần+Thơ',
+          tiktok: 'https://www.tiktok.com/@phukien65cantho/video/7542728369830399239',
+          desc: 'Bánh cống giòn rụm, nhân đậu xanh thịt heo, nước mắm chua ngọt.',
+          img: 'https://canthoriviu.vn/wp-content/uploads/2023/05/1_1753_60118284-1-1.jpeg'
+        },
+        {
+          name: 'Pizza Hủ Tiếu',
+          type: 'snack',
+          address: 'Chợ nổi Cái Răng / Lò hủ tiếu',
+          mapLink: 'https://www.google.com/maps/search/?api=1&query=Lò+hủ+tiếu+Sáu+Hoài',
+          tiktok: 'https://www.tiktok.com/@dulichcantho02/video/7491974815553801479',
+          desc: 'Đặc sản độc đáo, hủ tiếu chiên giòn ăn như snack.',
+          img: 'https://statics.vinpearl.com/pizza-hu-tieu-4_1630401746.jpg'
+        },
+        {
+          name: 'Trái Cây Chợ Nổi',
+          type: 'snack',
+          address: 'Chợ nổi Cái Răng',
+          mapLink: 'https://www.google.com/maps/search/?api=1&query=Chợ+nổi+Cái+Răng',
+          tiktok: null,
+          desc: 'Thưởng thức trái cây tươi rói ngay trên ghe.',
+          img: 'https://pystravel.vn/uploads/posts/albums/3689/97fe8453ced6c3d1426659fb6a303821.jpg'
+        },
+        {
+          name: 'Chuối Nếp Nướng',
+          type: 'snack',
+          address: 'Chợ Cái Khế, Đường Nguyễn Đức Cảnh',
+          mapLink: 'https://www.google.com/maps/search/?api=1&query=Chợ+Cái+Khế+Cần+Thơ',
+          tiktok: 'https://www.tiktok.com/@trangduongdaily/video/7584051606354791687?is_from_webapp=1&sender_device=pc&web_id=7598236609910621704',
+          desc: 'Chuối bọc nếp nướng thơm lừng, chan nước cốt dừa.',
+          img: 'https://canthologistics.com/wp-content/uploads/2024/10/chuoi-nep-nuong-xep-top-mon-trang-mieng-ngon-nhat-the-gioi.jpg'
+        }
+      ];
+
+      const itineraryData = {
+        1: [
+          {
+            time: '05:00',
+            title: 'Xuất phát tại SG',
+            desc: 'Chạy QL1A, ghé ăn sáng Mỹ Tho.',
+            icon: '🚩'
+          },
+          { time: '10:30', title: 'Đến Cần Thơ', desc: 'Check-in. Nghỉ ngơi xíu.', icon: '🏁' },
+          {
+            time: '12:00',
+            title: 'Bánh Cống Cô Út',
+            desc: 'Ghé 86/38 Lý Tự Trọng ăn trưa nhẹ món đặc sản này.',
+            icon: '🥟'
+          },
+          {
+            time: '16:00',
+            title: 'Dạo Chợ Cái Khế',
+            desc: 'Tìm món Chuối Nếp Nướng đường Nguyễn Đức Cảnh.',
+            icon: '🍌'
+          },
+          {
+            time: '19:00',
+            title: 'Phố Nướng 102',
+            desc: 'Ra Trần Hoàng Na làm vài ly bia, nướng tại bàn.',
+            icon: '🍻'
+          }
+        ],
+        2: [
+          {
+            time: '05:15',
+            title: 'Chợ Nổi Cái Răng',
+            desc: 'Thuê ghe đi chợ. Mua trái cây ăn liền.',
+            icon: '🚤'
+          },
+          {
+            time: '07:30',
+            title: 'Pizza Hủ Tiếu',
+            desc: 'Ghé lò hủ tiếu gần chợ nổi thử món này.',
+            icon: '🍕'
+          },
+          {
+            time: '11:30',
+            title: 'Cồn Sơn',
+            desc: 'Gửi xe máy, qua cồn ăn cơm trưa nhà vườn.',
+            icon: '🐟'
+          },
+          {
+            time: '19:00',
+            title: 'Lẩu Mắm Kiều Trinh',
+            desc: 'Ghé 26 Trần Khánh Dư ăn lẩu mắm chuẩn vị.',
+            icon: '🍲'
+          }
+        ],
+        3: [
+          { time: '08:00', title: 'Cafe Sáng', desc: 'Kiểm tra xe cộ trước khi về.', icon: '☕' },
+          { time: '10:00', title: 'Mua Quà', desc: 'Mua bánh tét, nem lai vung.', icon: '🎁' },
+          { time: '12:00', title: 'Ăn trưa & Về', desc: 'Ăn no bụng rồi chạy về SG.', icon: '🔙' }
+        ]
+      };
+
+      // --- Core Functions ---
+
+      function switchDay(day) {
+        document.querySelectorAll('[id^="tab-day"]').forEach((btn) => {
+          btn.className =
+            'px-5 py-2 rounded font-bold transition bg-slate-100 text-slate-600 hover:bg-slate-200 border-2 border-transparent';
+        });
+        const activeBtn = document.getElementById(`tab-day${day}`);
+        activeBtn.className =
+          'px-5 py-2 rounded font-bold transition bg-amber-500 text-white shadow-md transform scale-105 border-2 border-amber-500';
+
+        const container = document.getElementById('timeline-content');
+        container.innerHTML = '';
+
+        itineraryData[day].forEach((item, index) => {
+          const isLast = index === itineraryData[day].length - 1;
+          const html = `
+                    <div class="relative pl-8 ${isLast ? '' : 'pb-8'}">
+                        ${!isLast ? '<div class="absolute left-[-11px] top-2 h-full w-0.5 bg-slate-300"></div>' : ''}
+                        <div class="absolute left-[-24px] top-0 flex h-8 w-8 items-center justify-center rounded-full bg-white border-2 border-amber-500 text-lg z-10 shadow-sm">
+                            ${item.icon}
+                        </div>
+                        <div class="group relative rounded bg-white p-4 border border-slate-200 hover:shadow-md transition-all duration-200 hover:border-amber-400">
+                            <span class="inline-block px-2 py-0.5 mb-2 text-xs font-bold text-amber-700 bg-amber-100 rounded">
+                                ${item.time}
+                            </span>
+                            <h3 class="text-lg font-bold text-slate-800">${item.title}</h3>
+                            <p class="mt-1 text-slate-600 text-sm leading-relaxed">${item.desc}</p>
+                        </div>
+                    </div>
+                `;
+          container.innerHTML += html;
+        });
+      }
+
+      function renderFood(filterType) {
+        const grid = document.getElementById('food-grid');
+        grid.innerHTML = '';
+
+        const filtered =
+          filterType === 'all' ? foodData : foodData.filter((f) => f.type === filterType);
+
+        filtered.forEach((item) => {
+          const fallbackUrl = `https://via.placeholder.com/600x400/cbd5e1/475569?text=${encodeURIComponent(item.name)}`;
+
+          // Construct buttons based on available data
+          let linksHtml = '';
+          if (item.mapLink) {
+            linksHtml += `<a href="${item.mapLink}" target="_blank" class="btn-icon bg-blue-100 text-blue-700 px-3 py-1.5 rounded-md text-xs font-bold hover:bg-blue-200">Chỉ Đường 🗺️</a>`;
+          }
+          if (item.tiktok) {
+            linksHtml += `<a href="${item.tiktok}" target="_blank" class="btn-icon bg-black text-white px-3 py-1.5 rounded-md text-xs font-bold hover:bg-gray-800 ml-2">TikTok 🎵</a>`;
+          }
+
+          const card = `
+                    <div class="food-card bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-xl transition duration-300 flex flex-col h-full group relative">
+                        <div class="h-48 overflow-hidden relative bg-slate-200 img-skeleton">
+                             <img src="${item.img}" alt="${item.name}" 
+                                class="food-card-img w-full h-full object-cover opacity-0 transition-opacity duration-300"
+                                onload="this.classList.remove('opacity-0'); this.parentElement.classList.remove('img-skeleton');"
+                                onerror="this.onerror=null; this.src='${fallbackUrl}'; this.classList.remove('opacity-0'); this.parentElement.classList.remove('img-skeleton');">
+                        </div>
+                        <div class="p-5 flex flex-col flex-grow">
+                            <h4 class="text-lg font-bold text-slate-800 mb-1 group-hover:text-amber-600 transition">${item.name}</h4>
+                            <p class="text-xs text-slate-500 mb-2 font-medium italic truncate">📍 ${item.address}</p>
+                            <p class="text-sm text-slate-600 mb-4 flex-grow line-clamp-3">${item.desc}</p>
+                            
+                            <div class="flex flex-wrap gap-2 mb-3">
+                                ${linksHtml}
+                            </div>
+
+                            <div class="text-xs text-slate-400 border-t pt-3 flex items-center justify-between mt-auto">
+                                <span class="text-amber-600 font-bold">${item.type === 'main' ? 'Món Chính' : 'Ăn Vặt'}</span>
+                                <button onclick="getFoodReview('${item.name}')" class="text-amber-600 hover:text-amber-700 font-bold text-xs flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-full border border-amber-200">
+                                    AI Review ✨
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+          grid.innerHTML += card;
+        });
+      }
+
+      function filterFood(type) {
+        document.querySelectorAll('.food-filter-btn').forEach((btn) => {
+          btn.classList.remove('bg-slate-800', 'text-white');
+          btn.classList.add('bg-white', 'text-slate-600', 'border', 'border-slate-300');
+        });
+        event.target.classList.remove('bg-white', 'text-slate-600', 'border', 'border-slate-300');
+        event.target.classList.add('bg-slate-800', 'text-white');
+        renderFood(type);
+      }
+
+      function scrollToSection(id) {
+        const el = document.getElementById(id);
+        const navHeight = 80;
+        const y = el.getBoundingClientRect().top + window.pageYOffset - navHeight;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+        document.getElementById('mobile-nav').classList.add('hidden');
+      }
+
+      function toggleMobileNav() {
+        document.getElementById('mobile-nav').classList.toggle('hidden');
+      }
+
+      // --- Chat & AI Functions ---
+
+      function toggleChat() {
+        const chatWindow = document.getElementById('chatWindow');
+        chatWindow.style.display = chatWindow.style.display === 'flex' ? 'none' : 'flex';
+      }
+
+      async function sendMessage() {
+        const input = document.getElementById('userQuery');
+        const messages = document.getElementById('chatMessages');
+        const text = input.value.trim();
+        if (!text) return;
+
+        messages.innerHTML += `<div class="message user">${text}</div>`;
+        input.value = '';
+        messages.scrollTop = messages.scrollHeight;
+
+        const loadingId = 'loading-' + Date.now();
+        messages.innerHTML += `<div class="message ai typing-indicator" id="${loadingId}"><span></span><span></span><span></span></div>`;
+        messages.scrollTop = messages.scrollHeight;
+
+        const systemPrompt =
+          'Bạn là Thổ Địa Cần Thơ, chuyên gia phượt và ăn uống. Giọng văn Nam Bộ, ngắn gọn.';
+        const response = await callGemini(text, systemPrompt);
+
+        document.getElementById(loadingId).remove();
+        messages.innerHTML += `<div class="message ai">${marked.parse(response)}</div>`;
+        messages.scrollTop = messages.scrollHeight;
+      }
+
+      function handleKeyPress(e) {
+        if (e.key === 'Enter') sendMessage();
+      }
+
+      async function getFoodReview(foodName) {
+        const modal = document.getElementById('reviewModal');
+        const content = document.getElementById('reviewContent');
+        const title = document.getElementById('reviewTitle');
+
+        title.innerText = `Review: ${foodName}`;
+        content.innerHTML = `<div class="flex justify-center p-10"><div class="typing-indicator"><span></span><span></span><span></span></div></div>`;
+        modal.style.display = 'flex';
+
+        const systemPrompt =
+          'Bạn là chuyên gia ẩm thực đường phố miền Tây. Review món này thật hấp dẫn.';
+        const prompt = `Review món ${foodName} ở Cần Thơ.`;
+
+        const response = await callGemini(prompt, systemPrompt);
+        content.innerHTML = marked.parse(response);
+      }
+
+      function closeReview(e) {
+        if (!e || e.target.id === 'reviewModal' || e.target.tagName === 'BUTTON') {
+          document.getElementById('reviewModal').style.display = 'none';
+        }
+      }
+
+      // --- Init ---
+      document.addEventListener('DOMContentLoaded', () => {
+        switchDay(1);
+        renderFood('all');
+
+        // Budget Chart (Split for 2 guys)
+        new Chart(document.getElementById('budgetChart'), {
+          type: 'bar',
+          data: {
+            labels: ['Khách Sạn', 'Ăn Uống', 'Xăng Xe', 'Vé/Tour', 'Dự Phòng'],
+            datasets: [
+              {
+                label: 'VND',
+                data: [1200000, 3000000, 300000, 500000, 500000],
+                backgroundColor: ['#64748B', '#F59E0B', '#3B82F6', '#06B6D4', '#94A3B8'],
+                borderRadius: 4
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: { beginAtZero: true, ticks: { callback: (v) => (v / 1000000).toFixed(1) + ' tr' } }
+            },
+            plugins: { legend: { display: false } }
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
