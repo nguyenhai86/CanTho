@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cần Thơ MotoTrip: N2 Edition</title>
+    <title>Cần Thơ MotoTrip: 3 Anh Em (Xuất phát 13h)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -11,12 +11,12 @@
       href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;900&display=swap"
       rel="stylesheet" />
     <style>
-      /* <!-- Chosen Palette: Adventure Green & Asphalt (Emerald, Slate, Amber) --> */
-      /* <!-- Application Structure: Added Route Selector (QL1A vs N2) to dynamically change content. --> */
+      /* <!-- Chosen Palette: Afternoon Sun & Neon Night --> */
+      /* <!-- Application Structure: Updated Day 0 timeline for 13:00 departure. --> */
 
       body {
         font-family: 'Be Vietnam Pro', sans-serif;
-        background-color: #f0fdf4; /* Light Green Tint for Nature vibe */
+        background-color: #f8fafc;
         color: #0f172a;
       }
 
@@ -66,50 +66,19 @@
         color: #94a3b8;
       }
 
-      /* Route Switcher Toggle */
-      .route-toggle {
-        display: flex;
-        background: #e2e8f0;
-        border-radius: 999px;
-        padding: 4px;
-        position: relative;
-        cursor: pointer;
-        width: 240px;
-        margin: 0 auto;
+      /* Optional Item Styling (Dashed Border) */
+      .item-optional {
+        border-style: dashed !important;
+        background-color: #f1f5f9 !important;
+        opacity: 0.9;
       }
-      .route-toggle div {
-        flex: 1;
-        text-align: center;
-        padding: 8px 16px;
-        z-index: 10;
-        font-weight: bold;
-        transition: color 0.3s;
-      }
-      .route-bg {
-        position: absolute;
-        top: 4px;
-        left: 4px;
-        height: calc(100% - 8px);
-        width: calc(50% - 4px);
-        background: #fff;
-        border-radius: 999px;
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      }
-      /* States */
-      .route-mode-ql1a .route-bg {
-        transform: translateX(0);
-        background: #64748b;
-      }
-      .route-mode-ql1a .opt-ql1a {
-        color: white;
-      }
-      .route-mode-n2 .route-bg {
-        transform: translateX(100%);
-        background: #10b981;
-      }
-      .route-mode-n2 .opt-n2 {
-        color: white;
+      .item-optional::after {
+        content: '(Tuỳ chọn)';
+        font-size: 0.7rem;
+        color: #64748b;
+        display: block;
+        margin-top: 4px;
+        font-style: italic;
       }
 
       /* Chatwidget Styles */
@@ -127,12 +96,12 @@
         width: 60px;
         height: 60px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%); /* Green for N2 vibe */
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); /* Amber for 1PM Sun */
         color: white;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        box-shadow: 0 4px 15px rgba(217, 119, 6, 0.4);
         cursor: pointer;
         transition: transform 0.3s ease;
         font-size: 30px;
@@ -156,7 +125,7 @@
       }
 
       .chat-header {
-        background: #064e3b;
+        background: #78350f;
         color: white;
         padding: 15px;
         display: flex;
@@ -168,7 +137,7 @@
         flex-grow: 1;
         padding: 15px;
         overflow-y: auto;
-        background: #f0fdf4;
+        background: #fffbeb;
         display: flex;
         flex-direction: column;
         gap: 10px;
@@ -183,12 +152,11 @@
       }
 
       .message.user {
-        background: #10b981;
+        background: #d97706;
         color: white;
         align-self: flex-end;
         border-bottom-right-radius: 2px;
       }
-
       .message.ai {
         background: white;
         color: #1e293b;
@@ -213,10 +181,6 @@
         outline: none;
       }
 
-      .chat-input-area input:focus {
-        border-color: #10b981;
-      }
-
       .typing-indicator span {
         display: inline-block;
         width: 6px;
@@ -226,17 +190,6 @@
         animation: typing 1s infinite ease-in-out;
         margin-right: 3px;
       }
-
-      .typing-indicator span:nth-child(1) {
-        animation-delay: 0s;
-      }
-      .typing-indicator span:nth-child(2) {
-        animation-delay: 0.2s;
-      }
-      .typing-indicator span:nth-child(3) {
-        animation-delay: 0.4s;
-      }
-
       @keyframes typing {
         0%,
         100% {
@@ -284,7 +237,7 @@
       }
     </style>
   </head>
-  <body class="antialiased min-h-screen flex flex-col route-mode-n2">
+  <body class="antialiased min-h-screen flex flex-col">
     <!-- Navigation -->
     <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur shadow-sm border-b border-gray-200">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -292,29 +245,29 @@
           <div class="flex items-center gap-2">
             <span class="text-2xl">🏍️</span>
             <div class="text-xl font-bold text-slate-800 tracking-tight">
-              Moto<span class="text-emerald-600">N2</span>
+              Moto<span class="text-amber-600">Trip</span>
             </div>
           </div>
           <div class="hidden md:flex space-x-8">
             <button
               onclick="scrollToSection('overview')"
-              class="text-slate-600 hover:text-emerald-600 font-bold transition">
-              Lộ Trình
-            </button>
-            <button
-              onclick="scrollToSection('checklist')"
-              class="text-slate-600 hover:text-emerald-600 font-bold transition">
-              Kiểm Tra Xe
+              class="text-slate-600 hover:text-amber-600 font-bold transition">
+              Tổng Quan
             </button>
             <button
               onclick="scrollToSection('itinerary')"
-              class="text-slate-600 hover:text-emerald-600 font-bold transition">
+              class="text-slate-600 hover:text-amber-600 font-bold transition">
               Lịch Trình
             </button>
             <button
               onclick="scrollToSection('food')"
-              class="text-slate-600 hover:text-emerald-600 font-bold transition">
+              class="text-slate-600 hover:text-amber-600 font-bold transition">
               Ăn Chơi
+            </button>
+            <button
+              onclick="scrollToSection('checklist')"
+              class="text-slate-600 hover:text-amber-600 font-bold transition">
+              Kiểm Tra Xe
             </button>
           </div>
           <button class="md:hidden text-2xl" onclick="toggleMobileNav()">☰</button>
@@ -324,12 +277,7 @@
         <button
           onclick="scrollToSection('overview')"
           class="block w-full text-left text-slate-700 font-bold">
-          Lộ Trình
-        </button>
-        <button
-          onclick="scrollToSection('checklist')"
-          class="block w-full text-left text-slate-700 font-bold">
-          Kiểm Tra Xe
+          Tổng Quan
         </button>
         <button
           onclick="scrollToSection('itinerary')"
@@ -341,6 +289,11 @@
           class="block w-full text-left text-slate-700 font-bold">
           Ăn Chơi
         </button>
+        <button
+          onclick="scrollToSection('checklist')"
+          class="block w-full text-left text-slate-700 font-bold">
+          Kiểm Tra Xe
+        </button>
       </div>
     </nav>
 
@@ -348,105 +301,44 @@
     <section id="overview" class="pt-10 pb-8 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full">
       <div class="text-center mb-10">
         <span
-          class="inline-block py-1 px-3 rounded bg-emerald-100 text-emerald-800 text-xs font-black uppercase tracking-wider mb-3"
-          >Phượt Xe Máy 2026</span
+          class="inline-block py-1 px-3 rounded bg-amber-100 text-amber-800 text-xs font-black uppercase tracking-wider mb-3"
+          >Trip 3 Người - 2 Xe</span
         >
         <h1 class="text-4xl sm:text-6xl font-black text-slate-900 mb-6 tracking-tighter">
-          SÀI GÒN <span class="text-slate-300 mx-2">➔</span>
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500"
+          PHƯỢT
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-500"
             >CẦN THƠ</span
           >
         </h1>
 
-        <!-- Route Switcher -->
-        <div class="mb-8">
-          <p class="text-sm text-slate-500 mb-3 font-bold uppercase tracking-wide">
-            Chọn Cung Đường Của Bạn:
-          </p>
-          <div class="route-toggle" onclick="toggleRoute()">
-            <div class="route-bg"></div>
-            <div class="opt-ql1a">QL1A (Truyền Thống)</div>
-            <div class="opt-n2">Đường N2 (Cảnh Đẹp)</div>
-          </div>
-        </div>
-
-        <p
-          id="route-desc"
-          class="text-lg text-slate-700 max-w-2xl mx-auto font-medium leading-relaxed">
-          Đang chọn: <strong>Cung đường N2</strong>. <br />
-          Xuyên rừng tràm, ruộng lúa Đồng Tháp Mười. Ít công an, ít bụi, cảnh siêu chill nhưng vắng
-          vẻ.
+        <p class="text-lg text-slate-700 max-w-2xl mx-auto font-medium leading-relaxed">
+          Xuất phát: <span class="font-bold text-amber-600">13:00 ngày 30/1</span>. <br />
+          Tranh thủ tới sớm nhận phòng, nghỉ ngơi để 31/1 chơi trọn vẹn.
         </p>
       </div>
 
-      <!-- Quick Stats Cards (Dynamic) -->
+      <!-- Quick Stats Cards -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        <div
-          class="glass-panel p-6 rounded-xl border-l-4 border-emerald-500 shadow-sm transition-all hover:shadow-md">
-          <div class="text-3xl mb-2" id="stat-icon-1">🌲</div>
-          <h3 class="font-bold text-slate-800 text-lg" id="stat-title-1">Cảnh Quan</h3>
-          <p class="text-slate-600 text-sm mt-1" id="stat-desc-1">
-            Ruộng lúa, Sen, Rừng tràm. Rất mát mắt và thoáng đãng.
+        <div class="bg-white p-6 rounded-xl border-l-4 border-amber-500 shadow-sm">
+          <div class="text-3xl mb-2">☀️</div>
+          <h3 class="font-bold text-slate-800 text-lg">Chạy Nắng 13H</h3>
+          <p class="text-slate-600 text-sm mt-1">
+            Đoạn đầu sẽ nắng. Nhớ mặc áo khoác dày, kính râm và uống nước đủ.
           </p>
         </div>
-        <div
-          class="glass-panel p-6 rounded-xl border-l-4 border-amber-500 shadow-sm transition-all hover:shadow-md">
-          <div class="text-3xl mb-2" id="stat-icon-2">⚠️</div>
-          <h3 class="font-bold text-slate-800 text-lg" id="stat-title-2">Lưu Ý N2</h3>
-          <p class="text-slate-600 text-sm mt-1" id="stat-desc-2">
-            Ít cây xăng & chỗ sửa xe. Tuyệt đối không đi đêm vì thiếu đèn đường.
+        <div class="bg-white p-6 rounded-xl border-l-4 border-blue-500 shadow-sm">
+          <div class="text-3xl mb-2">🏁</div>
+          <h3 class="font-bold text-slate-800 text-lg">Đến Sớm 17H30</h3>
+          <p class="text-slate-600 text-sm mt-1">
+            Check-in xong trời vừa mát. Kịp thời gian đi dạo Ninh Kiều buổi tối.
           </p>
         </div>
-        <div
-          class="glass-panel p-6 rounded-xl border-l-4 border-blue-500 shadow-sm transition-all hover:shadow-md">
-          <div class="text-3xl mb-2" id="stat-icon-3">📍</div>
-          <h3 class="font-bold text-slate-800 text-lg" id="stat-title-3">Lộ Trình</h3>
-          <p class="text-slate-600 text-sm mt-1" id="stat-desc-3">
-            An Sương ➔ Đức Hòa ➔ Thạnh Hóa ➔ Mỹ An ➔ Cao Lãnh ➔ Cầu Vàm Cống.
+        <div class="bg-white p-6 rounded-xl border-l-4 border-emerald-500 shadow-sm">
+          <div class="text-3xl mb-2">💰</div>
+          <h3 class="font-bold text-slate-800 text-lg">Chia 3 Cực Rẻ</h3>
+          <p class="text-slate-600 text-sm mt-1">
+            Dư dả ăn uống tại các quán hot: Phố Nướng 102, Lẩu Vịt...
           </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Biker Checklist -->
-    <section id="checklist" class="py-8 bg-slate-900 text-white w-full">
-      <div class="max-w-4xl mx-auto px-4 sm:px-6">
-        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
-          <span>🔧</span> Bảo Dưỡng (Đặc biệt quan trọng cho N2)
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div
-            class="flex items-center gap-3 p-3 bg-slate-800 rounded border border-slate-700 hover:border-emerald-500 transition cursor-pointer"
-            onclick="document.getElementById('check1').click()">
-            <input type="checkbox" id="check1" class="biker-check w-5 h-5 accent-emerald-500" />
-            <label for="check1" class="cursor-pointer select-none"
-              >Đổ đầy bình xăng (Cứ thấy cây lớn là đổ)</label
-            >
-          </div>
-          <div
-            class="flex items-center gap-3 p-3 bg-slate-800 rounded border border-slate-700 hover:border-emerald-500 transition cursor-pointer"
-            onclick="document.getElementById('check2').click()">
-            <input type="checkbox" id="check2" class="biker-check w-5 h-5 accent-emerald-500" />
-            <label for="check2" class="cursor-pointer select-none"
-              >Mang theo ruột xe dự phòng (N2 rất vắng)</label
-            >
-          </div>
-          <div
-            class="flex items-center gap-3 p-3 bg-slate-800 rounded border border-slate-700 hover:border-emerald-500 transition cursor-pointer"
-            onclick="document.getElementById('check3').click()">
-            <input type="checkbox" id="check3" class="biker-check w-5 h-5 accent-emerald-500" />
-            <label for="check3" class="cursor-pointer select-none"
-              >Kiểm tra lốp xe & thắng (Phanh)</label
-            >
-          </div>
-          <div
-            class="flex items-center gap-3 p-3 bg-slate-800 rounded border border-slate-700 hover:border-emerald-500 transition cursor-pointer"
-            onclick="document.getElementById('check4').click()">
-            <input type="checkbox" id="check4" class="biker-check w-5 h-5 accent-emerald-500" />
-            <label for="check4" class="cursor-pointer select-none"
-              >Áo khoác, kính râm (Nắng nhưng gió mạnh)</label
-            >
-          </div>
         </div>
       </div>
     </section>
@@ -455,31 +347,35 @@
     <section id="itinerary" class="py-12 bg-white w-full">
       <div class="max-w-5xl mx-auto px-4 sm:px-6">
         <div class="mb-10 text-center">
-          <h2 class="text-3xl font-black text-slate-900 uppercase">Lịch Trình Di Chuyển</h2>
-          <p class="text-slate-500 mt-1" id="itinerary-subtitle">
-            Đang hiển thị lộ trình N2 (Đồng Tháp Mười)
-          </p>
+          <h2 class="text-3xl font-black text-slate-900 uppercase">Lịch Trình</h2>
+          <p class="text-slate-500 mt-1">Bấm vào các tab để xem chi tiết.</p>
         </div>
 
         <!-- Tabs -->
-        <div class="flex justify-center mb-8 space-x-2 sm:space-x-4">
+        <div class="flex justify-center mb-8 space-x-2 sm:space-x-4 overflow-x-auto">
+          <button
+            onclick="switchDay(0)"
+            id="tab-day0"
+            class="px-4 py-2 rounded font-bold transition bg-amber-600 text-white shadow-md border-2 border-amber-600 whitespace-nowrap">
+            Chiều 30/1
+          </button>
           <button
             onclick="switchDay(1)"
             id="tab-day1"
-            class="px-5 py-2 rounded font-bold transition bg-emerald-600 text-white shadow-md transform scale-105 border-2 border-emerald-600">
-            Ngày 1 (31/1)
+            class="px-4 py-2 rounded font-bold transition bg-slate-100 text-slate-600 border-2 border-transparent whitespace-nowrap">
+            Ngày 31/1
           </button>
           <button
             onclick="switchDay(2)"
             id="tab-day2"
-            class="px-5 py-2 rounded font-bold transition bg-slate-100 text-slate-600 hover:bg-slate-200 border-2 border-transparent">
-            Ngày 2 (1/2)
+            class="px-4 py-2 rounded font-bold transition bg-slate-100 text-slate-600 border-2 border-transparent whitespace-nowrap">
+            Ngày 1/2
           </button>
           <button
             onclick="switchDay(3)"
             id="tab-day3"
-            class="px-5 py-2 rounded font-bold transition bg-slate-100 text-slate-600 hover:bg-slate-200 border-2 border-transparent">
-            Ngày 3 (2/2)
+            class="px-4 py-2 rounded font-bold transition bg-slate-100 text-slate-600 border-2 border-transparent whitespace-nowrap">
+            Sáng 2/2
           </button>
         </div>
 
@@ -495,9 +391,7 @@
     <section id="food" class="py-12 bg-slate-50 w-full">
       <div class="max-w-6xl mx-auto px-4 sm:px-6">
         <div class="text-center mb-10">
-          <h2 class="text-3xl font-black text-slate-900 uppercase">Trạm Tiếp Thực</h2>
-          <p class="text-slate-600 mt-2">Dữ liệu món ăn từ file Excel của bạn.</p>
-
+          <h2 class="text-3xl font-black text-slate-900 uppercase">Địa Điểm Đã Chọn</h2>
           <div class="flex justify-center gap-2 mt-5">
             <button
               onclick="filterFood('all')"
@@ -507,7 +401,7 @@
             <button
               onclick="filterFood('main')"
               class="food-filter-btn px-5 py-2 rounded font-bold bg-white text-slate-600 border border-slate-300 transition hover:bg-slate-100">
-              Ăn Chính
+              Ăn Chính/Nhậu
             </button>
             <button
               onclick="filterFood('snack')"
@@ -527,12 +421,51 @@
     <!-- Budget Section -->
     <section class="py-12 bg-white w-full border-t border-slate-200">
       <div class="max-w-4xl mx-auto px-4 sm:px-6">
-        <h2 class="text-2xl font-bold text-slate-900 text-center mb-4">
-          Chia "Cam-pu-chia" (Tổng 2 người)
-        </h2>
+        <h2 class="text-2xl font-bold text-slate-900 text-center mb-4">Tổng Chi Phí (3 Người)</h2>
         <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
           <div class="chart-container mx-auto">
             <canvas id="budgetChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Biker Checklist -->
+    <section id="checklist" class="py-8 bg-slate-900 text-white w-full">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+          <span>🔧</span> Bảo Dưỡng 2 Xe (Quan Trọng)
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div
+            class="flex items-center gap-3 p-3 bg-slate-800 rounded border border-slate-700 hover:border-amber-500 transition cursor-pointer"
+            onclick="document.getElementById('check1').click()">
+            <input type="checkbox" id="check1" class="biker-check w-5 h-5 accent-amber-500" />
+            <label for="check1" class="cursor-pointer select-none"
+              >Đổ đầy bình xăng trước khi xuất phát</label
+            >
+          </div>
+          <div
+            class="flex items-center gap-3 p-3 bg-slate-800 rounded border border-slate-700 hover:border-amber-500 transition cursor-pointer"
+            onclick="document.getElementById('check2').click()">
+            <input type="checkbox" id="check2" class="biker-check w-5 h-5 accent-amber-500" />
+            <label for="check2" class="cursor-pointer select-none"
+              >2 Gương chiếu hậu (Miền Tây bắt gắt)</label
+            >
+          </div>
+          <div
+            class="flex items-center gap-3 p-3 bg-slate-800 rounded border border-slate-700 hover:border-amber-500 transition cursor-pointer"
+            onclick="document.getElementById('check3').click()">
+            <input type="checkbox" id="check3" class="biker-check w-5 h-5 accent-amber-500" />
+            <label for="check3" class="cursor-pointer select-none">Kiểm tra lốp xe & thắng</label>
+          </div>
+          <div
+            class="flex items-center gap-3 p-3 bg-slate-800 rounded border border-slate-700 hover:border-amber-500 transition cursor-pointer"
+            onclick="document.getElementById('check4').click()">
+            <input type="checkbox" id="check4" class="biker-check w-5 h-5 accent-amber-500" />
+            <label for="check4" class="cursor-pointer select-none"
+              >Áo khoác dày, kính râm (Đi 13h rất nắng)</label
+            >
           </div>
         </div>
       </div>
@@ -546,15 +479,15 @@
             <span class="text-xl">🤠</span>
             <div>
               <div class="font-bold text-sm">Thổ Địa Cần Thơ AI</div>
-              <div class="text-xs text-emerald-100">Hỏi đường N2 cứ hú tui</div>
+              <div class="text-xs text-amber-200">Online</div>
             </div>
           </div>
           <button onclick="toggleChat()" class="text-white hover:text-amber-400">✕</button>
         </div>
         <div class="chat-messages" id="chatMessages">
           <div class="message ai">
-            Chào 2 đại ca! Đi N2 là chuẩn bài "phượt" rồi. Nhớ đổ đầy xăng đoạn Thạnh Hóa nghen. Cần
-            tìm quán nhậu ở Cần Thơ cứ hỏi tui! 🍻
+            Chào 3 đại ca! Xuất phát 1h trưa thì hơi nắng nha, nhớ trùm kín mít vào. Tới Cần Thơ tầm
+            chiều mát là đẹp. Cần gì hú tui! 🍻
           </div>
         </div>
         <div class="chat-input-area">
@@ -565,7 +498,7 @@
             onkeypress="handleKeyPress(event)" />
           <button
             onclick="sendMessage()"
-            class="bg-emerald-600 text-white p-2 rounded-full hover:bg-emerald-700 w-10 h-10 flex items-center justify-center">
+            class="bg-amber-600 text-white p-2 rounded-full hover:bg-amber-700 w-10 h-10 flex items-center justify-center">
             ➤
           </button>
         </div>
@@ -589,18 +522,17 @@
     </div>
 
     <footer class="bg-slate-900 text-slate-400 py-8 text-center mt-auto">
-      <p class="mb-2 text-lg text-white font-bold">Thượng Lộ Bình An nhé 2 Bro! 🏍️💨</p>
-      <p class="text-xs">Powered by Gemini API ✦ N2 Route Edition</p>
+      <p class="mb-2 text-clg text-white font-bold">Thượng Lộ Bình An nhé 3 Bro! 🏍️💨</p>
     </footer>
 
     <script>
       // --- Gemini API Configuration ---
-      const apiKey = 'AIzaSyABSpYivLdPe6GxQ33ZtcmFlHjinAJL4ik'; // Provided by environment
+      const apiKey = 'AIzaSyABSpYivLdPe6GxQ33ZtcmFlHjinAJL4ik';
 
       // Helper to call Gemini
       async function callGemini(prompt, systemInstruction = '') {
         if (!apiKey) {
-          return 'Chưa có API Key. (Chế độ giả lập: Đi N2 cẩn thận bắn tốc độ đoạn Đức Hòa nha đại ca!)';
+          return 'Chưa có API Key. (Chế độ giả lập: Đi 13h nhớ uống nước nhiều nha đại ca!)';
         }
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
         const payload = {
@@ -622,273 +554,217 @@
         }
       }
 
-      // --- STATE MANAGEMENT ---
-      let currentRoute = 'N2'; // Default to N2 based on user request
-      let currentDay = 1;
-
-      // --- Custom Data from CSV ---
+      // --- Custom Data ---
       const foodData = [
+        {
+          name: 'Lẩu Vịt Cây Trứng Cá',
+          type: 'main',
+          address: 'Đường Hoàng Quốc Việt (gần Thốt Nốt)',
+          mapLink:
+            'https://www.google.com/maps/search/?api=1&query=Lẩu+vịt+nấu+chao+cây+trứng+cá+cần+thơ',
+          tiktok:
+            'https://www.tiktok.com/@didauofficial/video/7323148355784248578?is_from_webapp=1&sender_device=pc&web_id=7598236609910621704',
+          desc: 'Món ăn hồi sức cực tốt cho 3 anh em. Vịt mềm, chao béo.',
+          img: 'https://scontent.fhan3-2.fna.fbcdn.net/v/t39.30808-6/496154613_2485025641831032_2422235189345591083_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=aa7b47&_nc_ohc=F2Jp_vudC3MQ7kNvwG1K3jR&_nc_oc=AdkFvN0rag8nTahKOSLQc68h55gjgAqb_6azfktbTWhkWwPs3_o-eGLOYs_BGs_5oqI&_nc_zt=23&_nc_ht=scontent.fhan3-2.fna&_nc_gid=b5gJzAYy3ls4e1q-yqtbEw&oh=00_AfrpZ5mwBq7w7wXk1Niq5QKUWK24OQHOZ0RptTe-K8vM7Q&oe=697A0325'
+        },
+        {
+          name: 'Nem Nướng Cô Thu',
+          type: 'main',
+          address: 'Đường Phạm Hùng, Lê Bình, Cái Răng',
+          mapLink: 'https://www.google.com/maps/search/?api=1&query=Nem+nướng+Cái+Răng+Cô+Thu',
+          tiktok:
+            'https://www.tiktok.com/@loanhquanhmientay/video/7362160315330481424?is_from_webapp=1&sender_device=pc&web_id=7598236609910621704',
+          desc: 'Đặc sản Cái Răng. Cuốn nem nóng với bánh hỏi.',
+          img: 'https://dantocmiennui-media.baotintuc.vn/images/57c5aab70c5efc5a98d240302ffc6edbcf0533580b040d14fdc8bc33ffa64029cb69bc977eb508fbc9a95eef3e2501d1a1953ec9b67cc2ae3bb6fb8a4fddd937e2f70135d22d21a88dc4a7c7b5fcf1dd/99adb57ced9be9eb6f949275625d8ce6-1.jpg'
+        },
         {
           name: 'Phố Nướng 102',
           type: 'main',
           address: '16B Trần Hoàng Na, Cần Thơ',
-          mapLink: 'https://goo.gl/maps/xyz',
-          tiktok: null,
-          desc: 'Quán nướng bình dân, không gian rộng rãi, thích hợp nhậu lai rai.',
-          img: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=600&auto=format&fit=crop'
+          mapLink: 'https://www.google.com/maps/search/?api=1&query=Phố+Nướng+102+Cần+Thơ',
+          tiktok:
+            'https://www.tiktok.com/@vovulamreview/video/7511191213362433288?is_from_webapp=1&sender_device=pc&web_id=7598236609910621704',
+          desc: 'Quán nhậu bình dân, không gian rộng rãi, thích hợp tăng 2.',
+          img: 'https://lh3.googleusercontent.com/p/AF1QipNZAeIE5TFYnWN44QqnmJi3EXLisF2svBWBMK8l=s1360-w1360-h1020-rw'
         },
         {
           name: 'Lẩu Mắm Kiều Trinh',
           type: 'main',
           address: '26 Trần Khánh Dư, Cần Thơ',
-          mapLink: 'https://goo.gl/maps/abc',
-          tiktok: 'https://tiktok.com/video/123',
-          desc: 'Lẩu mắm đậm đà, rau sống tươi ngon. Điểm đến nổi tiếng.',
-          img: 'https://lh3.googleusercontent.com/gps-cs-s/AG0ilSyzWpwt9sxrvlBjOWekrEeRQOfTG-_oyVdnfRUCqjy_diTarvlBrklR3eAAXGzR58UsEj4-ZBL0ZQUL7bJLcl2ecJA1oMCbPVPIMzHWM6FumWDIAApEwomlbqjANQBpMViqJV_xZX3QswA=s1360-w1360-h1020-rw'
+          mapLink: 'https://www.google.com/maps/search/?api=1&query=Lẩu+mắm+Kiều+Trinh+Cần+Thơ',
+          tiktok: 'https://www.tiktok.com/@embedichoi0/video/7593964647628197138',
+          desc: 'Lẩu mắm đậm đà, chuẩn vị miền Tây.',
+          img: 'https://lh3.googleusercontent.com/gps-cs-s/AHVAweoJ8lzrl0GGegX9VPoKFrE5xIAPOhzfH4-s21DjQS18SzlxTyubWh50cb1u51zZ_hIIxaUwzW3-DeXBhu4kgEfU-39B2V_5Uo_2Eyd_dgvzHdo7p7hCO3QQ-GUsBI87G-OUrIw36A=s1360-w1360-h1020-rw'
         },
         {
           name: 'Bánh Cống Cô Út',
           type: 'snack',
           address: '86/38 Lý Tự Trọng, Cần Thơ',
-          mapLink: 'https://goo.gl/maps/def',
-          tiktok: 'https://tiktok.com/video/456',
-          desc: 'Bánh cống giòn rụm, nhân đậu xanh thịt heo.',
+          mapLink: 'https://maps.app.goo.gl/dZbWcMeZjFBkchsh9',
+          tiktok: 'https://www.tiktok.com/@phukien65cantho/video/7542728369830399239',
+          desc: 'Bánh cống giòn rụm trong hẻm nhỏ.',
           img: 'https://canthoriviu.vn/wp-content/uploads/2023/05/1_1753_60118284-1-1.jpeg'
         },
         {
           name: 'Pizza Hủ Tiếu',
           type: 'snack',
           address: 'Lò Sáu Hoài / Chợ Nổi',
-          mapLink: 'https://goo.gl/maps/ghi',
-          tiktok: 'https://tiktok.com/video/789',
+          mapLink: 'https://maps.app.goo.gl/CBn8JDk5cusrmmaF6',
+          tiktok: 'https://www.tiktok.com/@dulichcantho02/video/7491974815553801479',
           desc: 'Hủ tiếu chiên giòn ăn như snack.',
-          img: 'https://statics.vinpearl.com/pizza-hu-tieu-4_1630401746.jpg'
-        },
-        {
-          name: 'Trái Cây Chợ Nổi',
-          type: 'snack',
-          address: 'Chợ nổi Cái Răng',
-          mapLink: null,
-          tiktok: null,
-          desc: 'Trái cây tươi rói ngay trên ghe.',
-          img: 'https://pystravel.vn/uploads/posts/albums/3689/97fe8453ced6c3d1426659fb6a303821.jpg'
+          img: 'https://vcdn1-dulich.vnecdn.net/2022/01/06/A-nh-3-4785-1628743117-3153-1641453317.jpg?w=680&h=0&q=100&dpr=2&fit=crop&s=TW4nEyCRGrEfJUig6VJtEA'
         },
         {
           name: 'Chuối Nếp Nướng',
           type: 'snack',
           address: 'Chợ Cái Khế, Nguyễn Đức Cảnh',
-          mapLink: null,
-          tiktok: null,
+          mapLink: 'https://www.google.com/maps/search/?api=1&query=Chợ+Cái+Khế+Cần+Thơ',
+          tiktok:
+            'https://www.tiktok.com/@trangduongdaily/video/7584051606354791687?is_from_webapp=1&sender_device=pc&web_id=7598236609910621704',
           desc: 'Chuối bọc nếp nướng thơm lừng cốt dừa.',
-          img: 'https://canthologistics.com/wp-content/uploads/2024/10/chuoi-nep-nuong-xep-top-mon-trang-mieng-ngon-nhat-the-gioi.jpg'
+          img: 'https://cdn.tgdd.vn/Files/2018/04/26/1084640/chuoi-boc-nep-nuong-thom-ngon-kho-cuong-ma-cuc-de-lam-1-760x367.jpg'
         }
       ];
 
-      // --- ITINERARY DATA (2 ROUTES) ---
+      // --- ITINERARY DATA ---
       const itineraryData = {
-        QL1A: {
-          1: [
-            {
-              time: '05:00',
-              title: 'Xuất phát (QL1A)',
-              desc: 'Hướng về Bình Chánh, Long An. Đông xe, nhiều bụi, nhiều chốt.',
-              icon: '🚛'
-            },
-            {
-              time: '07:00',
-              title: 'Ăn sáng Mỹ Tho',
-              desc: 'Hủ tiếu Mỹ Tho ngã 3 Trung Lương.',
-              icon: '🍜'
-            },
-            {
-              time: '10:30',
-              title: 'Đến Cần Thơ',
-              desc: 'Qua cầu Mỹ Thuận, cầu Cần Thơ. Check-in khách sạn.',
-              icon: '🏁'
-            },
-            {
-              time: '12:00',
-              title: 'Bánh Cống Cô Út',
-              desc: 'Ăn trưa nhẹ trong hẻm Lý Tự Trọng.',
-              icon: '🥟'
-            },
-            { time: '19:00', title: 'Phố Nướng 102', desc: 'Nhậu lai rai buổi tối.', icon: '🍻' }
-          ]
-        },
-        N2: {
-          1: [
-            {
-              time: '05:00',
-              title: 'Xuất phát (An Sương)',
-              desc: 'Đi Tỉnh Lộ 10 hoặc QL22 rẽ vào Nguyễn Văn Bứa -> TL9 -> Đức Hòa.',
-              icon: '🏍️'
-            },
-            {
-              time: '07:30',
-              title: 'Ăn sáng Thạnh Hóa',
-              desc: 'Dọc đường N2 có các quán Bún Bò/Hủ Tiếu bình dân ven rừng tràm. Nghỉ ngơi ngắm ruộng.',
-              icon: '🌾'
-            },
-            {
-              time: '09:30',
-              title: 'Mỹ An - Tháp Mười',
-              desc: 'Đoạn này đường đẹp, hai bên là sen và lúa. Chạy chill, nhớ để ý tốc độ.',
-              icon: '🪷'
-            },
-            {
-              time: '11:00',
-              title: 'Cầu Cao Lãnh & Vàm Cống',
-              desc: 'Hai cây cầu dây văng siêu đẹp và hùng vĩ. Check-in ngay chân cầu nếu thích.',
-              icon: '🌉'
-            },
-            {
-              time: '12:30',
-              title: 'Đến Cần Thơ',
-              desc: 'Vào thành phố đường Nguyễn Văn Linh. Check-in khách sạn.',
-              icon: '🏁'
-            },
-            {
-              time: '19:00',
-              title: 'Phố Nướng 102',
-              desc: 'Tối ra Trần Hoàng Na làm vài ly bia.',
-              icon: '🍻'
-            }
-          ]
-        },
-        Common: {
-          // Days 2 & 3 are same for both
-          2: [
-            {
-              time: '05:15',
-              title: 'Chợ Nổi Cái Răng',
-              desc: 'Thuê ghe riêng. Ăn trái cây, uống cafe kho.',
-              icon: '🚤'
-            },
-            { time: '07:30', title: 'Pizza Hủ Tiếu', desc: 'Ghé lò hủ tiếu Sáu Hoài.', icon: '🍕' },
-            {
-              time: '11:30',
-              title: 'Cồn Sơn',
-              desc: 'Qua cồn ăn cơm trưa, xem cá lóc bay.',
-              icon: '🐟'
-            },
-            {
-              time: '19:00',
-              title: 'Lẩu Mắm Kiều Trinh',
-              desc: 'Trần Khánh Dư. Món này phải ăn cho biết vị miền Tây.',
-              icon: '🍲'
-            }
-          ],
-          3: [
-            {
-              time: '08:00',
-              title: 'Cafe & Kiểm tra xe',
-              desc: 'Chuẩn bị xe cộ để về lại SG (Đường N2 vắng nên xe phải ngon).',
-              icon: '🔧'
-            },
-            { time: '10:00', title: 'Mua Quà', desc: 'Bánh tét, nem chua.', icon: '🎁' },
-            {
-              time: '12:00',
-              title: 'Ăn trưa & Về',
-              desc: 'Về lại cung đường N2 hoặc đổi gió QL1A tùy sức khỏe.',
-              icon: '🔙'
-            }
-          ]
-        }
+        0: [
+          // Day 0: 30/1
+          {
+            time: '13:00',
+            title: 'Xuất phát (SG)',
+            desc: 'Trời nắng 1h trưa. Nhớ mặc kín, đeo kính râm. Chạy cẩn thận.',
+            icon: '☀️'
+          },
+          {
+            time: '15:30',
+            title: 'Nghỉ Chân Tiền Giang',
+            desc: 'Nghỉ võng, uống nước mía/dừa tươi giải nhiệt tầm 30p.',
+            icon: '🛑'
+          },
+          {
+            time: '17:30',
+            title: 'Check-in Cần Thơ',
+            desc: 'Tới nơi lúc trời dịu mát. Nhận phòng, tắm rửa cho khỏe.',
+            icon: '🏁'
+          },
+          {
+            time: '19:00',
+            title: 'Dạo Bến Ninh Kiều',
+            desc: 'Ra bờ kè hóng gió, ngắm tượng Bác Hồ, Cầu Tình Yêu.',
+            icon: '🌃'
+          },
+          {
+            time: '20:30',
+            title: 'Ăn Tối Nhẹ',
+            desc: 'Bún nước lèo hoặc Hủ tiếu gõ khuya.',
+            icon: '🍜'
+          }
+        ],
+        1: [
+          // Day 1: 31/1
+          {
+            time: '09:00',
+            title: 'Cafe Sáng',
+            desc: 'Ngủ nướng xíu rồi đi cafe vợt/view sông lấy lại năng lượng.',
+            icon: '☕'
+          },
+          {
+            time: '11:30',
+            title: 'Lẩu Vịt Cây Trứng Cá',
+            desc: 'Ăn trưa món này là đúng bài hồi sức.',
+            icon: '🍲'
+          },
+          { time: '13:30', title: 'Nhà Cổ Bình Thủy', desc: 'Tham quan nhà cổ.', icon: '🏛️' },
+          {
+            time: '15:00',
+            title: 'Cồn Sơn (Option)',
+            desc: 'Tiện đường đi luôn. Xem cá lóc bay, đi cầu khỉ. Nếu mệt thì bỏ qua.',
+            icon: '🐟',
+            isOptional: true
+          },
+          {
+            time: '17:00',
+            title: 'Bánh Cống Cô Út',
+            desc: 'Về trung tâm ăn xế món này.',
+            icon: '🥟'
+          },
+          {
+            time: '19:30',
+            title: 'Chợ Đêm & Chợ Cổ',
+            desc: 'Đi dạo chợ đêm Tây Đô, mua sắm linh tinh.',
+            icon: '🛍️'
+          }
+        ],
+        2: [
+          // Day 2: 1/2
+          {
+            time: '05:30',
+            title: 'Chợ Nổi Cái Răng',
+            desc: 'Đi sớm. Thuê 1 ghe riêng cho 3 người.',
+            icon: '🚤'
+          },
+          {
+            time: '07:00',
+            title: 'Ăn Sáng trên Ghe',
+            desc: 'Pizza hủ tiếu + Trái cây.',
+            icon: '🍍'
+          },
+          {
+            time: '11:30',
+            title: 'Nem Nướng Cô Thu',
+            desc: 'Đường Phạm Hùng (Cái Răng). Ăn trưa tiện đường về.',
+            icon: '🥓'
+          },
+          { time: '14:00', title: 'Ngủ Trưa', desc: 'Về khách sạn tránh nắng.', icon: '🛌' },
+          { time: '18:00', title: 'Lẩu Mắm Kiều Trinh', desc: 'Món chính buổi tối.', icon: '🍲' },
+          {
+            time: '20:30',
+            title: 'Phố Nướng 102',
+            desc: 'Tăng 2: Ngồi lai rai tới bến.',
+            icon: '🍻'
+          }
+        ],
+        3: [
+          // Day 3: 2/2
+          { time: '08:00', title: 'Cafe & Checkout', desc: 'Cafe sáng, trả phòng.', icon: '☕' },
+          {
+            time: '10:30',
+            title: 'Về Sài Gòn',
+            desc: 'Lên đường về. Kết thúc hành trình.',
+            icon: '🔙'
+          }
+        ]
       };
 
       // --- Core Functions ---
 
-      function toggleRoute() {
-        currentRoute = currentRoute === 'N2' ? 'QL1A' : 'N2';
-        document.body.className = `antialiased min-h-screen flex flex-col route-mode-${currentRoute.toLowerCase()}`;
-
-        // Update Text Info
-        const desc = document.getElementById('route-desc');
-        const subtitle = document.getElementById('itinerary-subtitle');
-
-        if (currentRoute === 'N2') {
-          desc.innerHTML = `Đang chọn: <strong>Cung đường N2</strong>. <br>Xuyên rừng tràm, ruộng lúa Đồng Tháp Mười. Ít công an, ít bụi, cảnh siêu chill nhưng vắng vẻ.`;
-          subtitle.innerText = 'Đang hiển thị lộ trình N2 (Đồng Tháp Mười)';
-          updateStats('N2');
-        } else {
-          desc.innerHTML = `Đang chọn: <strong>Quốc lộ 1A</strong>. <br>Đường lớn, đông vui, nhiều trạm dừng chân nhưng bụi và nhiều chốt công an.`;
-          subtitle.innerText = 'Đang hiển thị lộ trình QL1A (Truyền Thống)';
-          updateStats('QL1A');
-        }
-
-        // Refresh Itinerary
-        switchDay(currentDay);
-      }
-
-      function updateStats(route) {
-        if (route === 'N2') {
-          document.getElementById('stat-icon-1').innerText = '🌲';
-          document.getElementById('stat-title-1').innerText = 'Cảnh Quan';
-          document.getElementById('stat-desc-1').innerText =
-            'Ruộng lúa, Sen, Rừng tràm. Rất mát mắt.';
-
-          document.getElementById('stat-icon-2').innerText = '⚠️';
-          document.getElementById('stat-title-2').innerText = 'Lưu Ý N2';
-          document.getElementById('stat-desc-2').innerText = 'Ít cây xăng. Tuyệt đối không đi đêm.';
-
-          document.getElementById('stat-icon-3').innerText = '📍';
-          document.getElementById('stat-title-3').innerText = 'Lộ Trình';
-          document.getElementById('stat-desc-3').innerText =
-            'An Sương ➔ Đức Hòa ➔ Thạnh Hóa ➔ Cầu Vàm Cống.';
-        } else {
-          document.getElementById('stat-icon-1').innerText = '🚛';
-          document.getElementById('stat-title-1').innerText = 'Giao Thông';
-          document.getElementById('stat-desc-1').innerText =
-            'Đông xe tải, xe khách. Đường rộng nhưng bụi.';
-
-          document.getElementById('stat-icon-2').innerText = '👮';
-          document.getElementById('stat-title-2').innerText = 'Lưu Ý QL1A';
-          document.getElementById('stat-desc-2').innerText =
-            'Bắn tốc độ rát ở Tiền Giang (Cai Lậy/Châu Thành).';
-
-          document.getElementById('stat-icon-3').innerText = '📍';
-          document.getElementById('stat-title-3').innerText = 'Lộ Trình';
-          document.getElementById('stat-desc-3').innerText =
-            'Bình Chánh ➔ Tân An ➔ Mỹ Tho ➔ Cầu Mỹ Thuận.';
-        }
-      }
-
       function switchDay(day) {
-        currentDay = day;
-        // Update Buttons
         document.querySelectorAll('[id^="tab-day"]').forEach((btn) => {
           btn.className =
-            'px-5 py-2 rounded font-bold transition bg-slate-100 text-slate-600 hover:bg-slate-200 border-2 border-transparent';
+            'px-4 py-2 rounded font-bold transition bg-slate-100 text-slate-600 border-2 border-transparent whitespace-nowrap';
         });
         const activeBtn = document.getElementById(`tab-day${day}`);
-        const colorClass =
-          currentRoute === 'N2'
-            ? 'bg-emerald-600 border-emerald-600'
-            : 'bg-slate-600 border-slate-600';
-        activeBtn.className = `px-5 py-2 rounded font-bold transition text-white shadow-md transform scale-105 border-2 ${colorClass}`;
+        activeBtn.className =
+          'px-4 py-2 rounded font-bold transition bg-amber-600 text-white shadow-md border-2 border-amber-600 whitespace-nowrap';
 
         const container = document.getElementById('timeline-content');
         container.innerHTML = '';
 
-        // Decide which data to use
-        let data = [];
-        if (day === 1) {
-          data = itineraryData[currentRoute][1];
-        } else {
-          data = itineraryData.Common[day];
-        }
-
-        const accentColor = currentRoute === 'N2' ? 'emerald' : 'slate';
+        const data = itineraryData[day];
+        const accentColor = 'amber';
 
         data.forEach((item, index) => {
           const isLast = index === data.length - 1;
+          const optionalClass = item.isOptional ? 'item-optional' : '';
+
           const html = `
                     <div class="relative pl-8 ${isLast ? '' : 'pb-8'}">
                         ${!isLast ? `<div class="absolute left-[-11px] top-2 h-full w-0.5 bg-${accentColor}-200"></div>` : ''}
                         <div class="absolute left-[-24px] top-0 flex h-8 w-8 items-center justify-center rounded-full bg-white border-2 border-${accentColor}-500 text-lg z-10 shadow-sm">
                             ${item.icon}
                         </div>
-                        <div class="group relative rounded bg-white p-4 border border-slate-200 hover:shadow-md transition-all duration-200 hover:border-${accentColor}-400">
+                        <div class="group relative rounded bg-white p-4 border border-slate-200 hover:shadow-md transition-all duration-200 hover:border-${accentColor}-400 ${optionalClass}">
                             <span class="inline-block px-2 py-0.5 mb-2 text-xs font-bold text-${accentColor}-700 bg-${accentColor}-100 rounded">
                                 ${item.time}
                             </span>
@@ -911,7 +787,7 @@
           const fallbackUrl = `https://via.placeholder.com/600x400/cbd5e1/475569?text=${encodeURIComponent(item.name)}`;
           let linksHtml = '';
           if (item.mapLink)
-            linksHtml += `<a href="${item.mapLink}" target="_blank" class="btn-icon bg-blue-100 text-blue-700 px-3 py-1.5 rounded-md text-xs font-bold hover:bg-blue-200">Chỉ Đường 🗺️</a>`;
+            linksHtml += `<a href="${item.mapLink}" target="_blank" class="btn-icon bg-amber-100 text-amber-700 px-3 py-1.5 rounded-md text-xs font-bold hover:bg-amber-200">Chỉ Đường 🗺️</a>`;
           if (item.tiktok)
             linksHtml += `<a href="${item.tiktok}" target="_blank" class="btn-icon bg-black text-white px-3 py-1.5 rounded-md text-xs font-bold hover:bg-gray-800 ml-2">TikTok 🎵</a>`;
 
@@ -924,13 +800,13 @@
                                 onerror="this.onerror=null; this.src='${fallbackUrl}'; this.classList.remove('opacity-0'); this.parentElement.classList.remove('img-skeleton');">
                         </div>
                         <div class="p-5 flex flex-col flex-grow">
-                            <h4 class="text-lg font-bold text-slate-800 mb-1 group-hover:text-emerald-600 transition">${item.name}</h4>
+                            <h4 class="text-lg font-bold text-slate-800 mb-1 group-hover:text-amber-600 transition">${item.name}</h4>
                             <p class="text-xs text-slate-500 mb-2 font-medium italic truncate">📍 ${item.address}</p>
                             <p class="text-sm text-slate-600 mb-4 flex-grow line-clamp-3">${item.desc}</p>
                             <div class="flex flex-wrap gap-2 mb-3">${linksHtml}</div>
                             <div class="text-xs text-slate-400 border-t pt-3 flex items-center justify-between mt-auto">
-                                <span class="text-emerald-600 font-bold">${item.type === 'main' ? 'Món Chính' : 'Ăn Vặt'}</span>
-                                <button onclick="getFoodReview('${item.name}')" class="text-emerald-600 hover:text-emerald-700 font-bold text-xs flex items-center gap-1 bg-emerald-50 px-2 py-1 rounded-full border border-emerald-200">AI Review ✨</button>
+                                <span class="text-amber-600 font-bold">${item.type === 'main' ? 'Món Chính' : 'Ăn Vặt'}</span>
+                                <button onclick="getFoodReview('${item.name}')" class="text-amber-600 hover:text-amber-700 font-bold text-xs flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-full border border-amber-200">AI Review ✨</button>
                             </div>
                         </div>
                     </div>
@@ -1013,17 +889,17 @@
 
       // --- Init ---
       document.addEventListener('DOMContentLoaded', () => {
-        switchDay(1); // Loads Day 1 based on default N2 route
+        switchDay(0); // Load Day 0 first
         renderFood('all');
 
         new Chart(document.getElementById('budgetChart'), {
           type: 'bar',
           data: {
-            labels: ['Khách Sạn', 'Ăn Uống', 'Xăng Xe', 'Vé/Tour', 'Dự Phòng'],
+            labels: ['Khách Sạn', 'Ăn Uống', 'Xăng Xe', 'Vé/Ghe', 'Dự Phòng'],
             datasets: [
               {
                 label: 'VND',
-                data: [1200000, 3000000, 300000, 500000, 500000],
+                data: [1500000, 4200000, 600000, 700000, 600000],
                 backgroundColor: ['#64748B', '#F59E0B', '#10B981', '#06B6D4', '#94A3B8'],
                 borderRadius: 4
               }
