@@ -1,920 +1,1208 @@
 <!doctype html>
 <html lang="vi">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cần Thơ Trip</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lịch trình xe máy: Cần Thơ / Sóc Trăng (30/1 → 2/2)</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
       rel="stylesheet" />
     <style>
-      /* <!-- Chosen Palette: Afternoon Sun & Neon Night --> */
-      /* <!-- Application Structure: Updated Day 0 timeline for 13:00 departure. --> */
-
+      :root {
+        --bg: #f6fbff;
+        --card: #ffffff;
+        --card2: #f8fbff;
+        --text: #05323a;
+        --muted: #4b6b78;
+        --line: rgba(5, 50, 60, 0.08);
+        --accent: #0ea5a4; /* teal */
+        --accent2: #0284c7; /* river blue */
+        --warn: #f59e0b;
+        --danger: #ef4444;
+        --radius: 12px;
+      }
+      * {
+        box-sizing: border-box;
+      }
       body {
-        font-family: 'Be Vietnam Pro', sans-serif;
-        background-color: #f8fafc;
-        color: #0f172a;
+        margin: 0;
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          Helvetica,
+          Arial,
+          'Apple Color Emoji',
+          'Segoe UI Emoji';
+        color: var(--text);
+        background:
+          radial-gradient(800px 500px at 20% 10%, rgba(14, 165, 164, 0.08), transparent 40%),
+          radial-gradient(700px 400px at 80% 20%, rgba(2, 132, 199, 0.06), transparent 40%),
+          radial-gradient(600px 350px at 50% 90%, rgba(245, 158, 11, 0.04), transparent 50%),
+          var(--bg);
+        min-height: 100vh;
       }
-
-      .chart-container {
-        position: relative;
-        width: 100%;
-        max-width: 600px;
-        margin-left: auto;
-        margin-right: auto;
-        height: 300px;
-        max-height: 400px;
+      a {
+        color: inherit;
       }
-
-      .glass-panel {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(8px);
-        border: 1px solid #e2e8f0;
+      .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 22px;
       }
-
-      .food-card-img {
-        transition: transform 0.5s ease;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-      .food-card:hover .food-card-img {
-        transform: scale(1.05);
-      }
-
-      .img-skeleton {
-        background-color: #cbd5e1;
-        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-      }
-      @keyframes pulse {
-        0%,
-        100% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.5;
-        }
-      }
-
-      /* Checkbox custom style */
-      .biker-check:checked + label {
-        text-decoration: line-through;
-        color: #94a3b8;
-      }
-
-      /* Optional Item Styling (Dashed Border) */
-      .item-optional {
-        border-style: dashed !important;
-        background-color: #f1f5f9 !important;
-        opacity: 0.9;
-      }
-      .item-optional::after {
-        content: '(Tuỳ chọn)';
-        font-size: 0.7rem;
-        color: #64748b;
-        display: block;
-        margin-top: 4px;
-        font-style: italic;
-      }
-
-      /* Chatwidget Styles */
-      .chat-widget {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 1000;
+      header {
         display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-      }
-
-      .chat-button {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); /* Amber for 1PM Sun */
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 4px 15px rgba(217, 119, 6, 0.4);
-        cursor: pointer;
-        transition: transform 0.3s ease;
-        font-size: 30px;
-      }
-
-      .chat-button:hover {
-        transform: scale(1.1);
-      }
-
-      .chat-window {
-        width: 350px;
-        height: 500px;
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        margin-bottom: 20px;
-        display: none;
-        flex-direction: column;
-        overflow: hidden;
-        border: 1px solid #e2e8f0;
-      }
-
-      .chat-header {
-        background: #78350f;
-        color: white;
-        padding: 15px;
-        display: flex;
+        gap: 18px;
+        align-items: flex-start;
         justify-content: space-between;
-        align-items: center;
+        padding: 18px 18px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(250, 250, 252, 0.9));
+        box-shadow: 0 6px 18px rgba(4, 20, 30, 0.04);
       }
-
-      .chat-messages {
-        flex-grow: 1;
-        padding: 15px;
-        overflow-y: auto;
-        background: #fffbeb;
+      h1 {
+        margin: 0;
+        font-size: 22px;
+        letter-spacing: 0.2px;
+      }
+      .sub {
+        margin-top: 6px;
+        color: var(--muted);
+        line-height: 1.35;
+      }
+      .pills {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+      .pill {
+        border: 1px solid var(--line);
+        background: var(--card2);
+        padding: 8px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .pill b {
+        color: var(--text);
+      }
+      .tabs {
+        display: flex;
+        gap: 8px;
+        margin: 16px 0 12px;
+        flex-wrap: wrap;
+      }
+      .tab {
+        cursor: pointer;
+        border: 1px solid var(--line);
+        background: var(--card2);
+        padding: 10px 12px;
+        border-radius: 999px;
+        font-size: 13px;
+        color: var(--muted);
+        user-select: none;
+      }
+      .tab.active {
+        background: rgba(14, 165, 164, 0.12);
+        color: var(--text);
+        border-color: rgba(14, 165, 164, 0.25);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 14px;
+      }
+      @media (max-width: 920px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .card {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--card);
+        overflow: hidden;
+      }
+      .card .hd {
+        padding: 14px 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        border-bottom: 1px solid var(--line);
+        background: var(--card2);
+      }
+      .card .hd h2 {
+        margin: 0;
+        font-size: 14px;
+        color: var(--text);
+      }
+      .card .hd .mini {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .card .bd {
+        padding: 14px;
+      }
+      .timeline {
         display: flex;
         flex-direction: column;
+        gap: 12px;
+      }
+      .day {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+        background: var(--card2);
+      }
+      .day .dhd {
+        padding: 12px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         gap: 10px;
+        border-bottom: 1px solid var(--line);
       }
-
-      .message {
-        max-width: 80%;
-        padding: 10px 15px;
-        border-radius: 15px;
-        font-size: 14px;
+      .day .dhd .dtitle {
+        font-weight: 700;
+      }
+      .day .dhd .dmeta {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .block {
+        padding: 10px 12px;
+        display: grid;
+        grid-template-columns: 92px 1fr;
+        gap: 10px;
+        border-bottom: 1px dashed rgba(5, 50, 60, 0.06);
+      }
+      .block:last-child {
+        border-bottom: none;
+      }
+      .time {
+        color: var(--accent2);
+        font-weight: 700;
+        font-size: 12px;
+      }
+      .desc {
+        color: var(--muted);
         line-height: 1.4;
+        font-size: 13px;
       }
-
-      .message.user {
-        background: #d97706;
-        color: white;
-        align-self: flex-end;
-        border-bottom-right-radius: 2px;
+      .desc b {
+        color: var(--text);
       }
-      .message.ai {
-        background: white;
-        color: #1e293b;
-        align-self: flex-start;
-        border-bottom-left-radius: 2px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      .badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 12px;
+        margin-right: 6px;
+        border: 1px solid var(--line);
+        color: var(--muted);
+        background: var(--card2);
       }
-
-      .chat-input-area {
-        padding: 15px;
-        background: white;
-        border-top: 1px solid #e2e8f0;
+      .badge.accent {
+        border-color: rgba(14, 165, 164, 0.25);
+        background: rgba(14, 165, 164, 0.12);
+        color: var(--text);
+      }
+      .badge.alt {
+        border-color: rgba(2, 132, 199, 0.25);
+        background: rgba(2, 132, 199, 0.1);
+        color: var(--text);
+      }
+      .badge.warn {
+        border-color: rgba(245, 158, 11, 0.25);
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--text);
+      }
+      .controls {
         display: flex;
         gap: 10px;
+        flex-wrap: wrap;
       }
-
-      .chat-input-area input {
-        flex-grow: 1;
-        padding: 10px;
-        border: 1px solid #cbd5e1;
-        border-radius: 20px;
-        outline: none;
-      }
-
-      .typing-indicator span {
-        display: inline-block;
-        width: 6px;
-        height: 6px;
-        background-color: #94a3b8;
-        border-radius: 50%;
-        animation: typing 1s infinite ease-in-out;
-        margin-right: 3px;
-      }
-      @keyframes typing {
-        0%,
-        100% {
-          transform: translateY(0);
-        }
-        50% {
-          transform: translateY(-5px);
-        }
-      }
-
-      /* Modal for Food Review */
-      .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 2000;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        backdrop-filter: blur(4px);
-      }
-      .modal-content {
-        background: white;
-        width: 90%;
-        max-width: 500px;
-        border-radius: 20px;
-        padding: 25px;
-        position: relative;
-        max-height: 80vh;
-        overflow-y: auto;
-      }
-
-      /* Button Icon Styles */
-      .btn-icon {
+      .btn {
+        cursor: pointer;
+        border: 1px solid var(--line);
+        background: var(--card2);
+        color: var(--text);
+        padding: 9px 11px;
+        border-radius: 12px;
+        font-size: 13px;
         display: inline-flex;
+        gap: 8px;
         align-items: center;
-        gap: 4px;
-        transition: all 0.2s;
+        user-select: none;
       }
-      .btn-icon:hover {
-        transform: translateY(-1px);
+      .btn.primary {
+        border-color: rgba(14, 165, 164, 0.25);
+        background: rgba(14, 165, 164, 0.12);
+        color: var(--text);
+      }
+      .btn.secondary {
+        border-color: rgba(2, 132, 199, 0.25);
+        background: rgba(2, 132, 199, 0.1);
+        color: var(--text);
+      }
+      .btn:active {
+        transform: translateY(1px);
+      }
+      .hint {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 8px;
+        line-height: 1.35;
+      }
+      .search {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: var(--card);
+        color: var(--text);
+      }
+      .chips {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+      }
+      .chip {
+        cursor: pointer;
+        user-select: none;
+        padding: 7px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        color: var(--muted);
+        background: var(--card2);
+        font-size: 12px;
+      }
+      .chip.active {
+        border-color: rgba(14, 165, 164, 0.25);
+        background: rgba(14, 165, 164, 0.12);
+        color: var(--text);
+      }
+      .items {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 12px;
+      }
+      @media (max-width: 720px) {
+        .items {
+          grid-template-columns: 1fr;
+        }
+      }
+      .item {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+        background: var(--card2);
+        display: flex;
+        flex-direction: column;
+        min-height: 280px;
+      }
+      .item img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        background: rgba(255, 255, 255, 0.02);
+      }
+      .item .ibd {
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        flex: 1;
+      }
+      .item .name {
+        font-weight: 800;
+        letter-spacing: 0.2px;
+      }
+      .item .addr {
+        color: var(--muted);
+        font-size: 12.5px;
+        line-height: 1.35;
+      }
+      .item .actions {
+        margin-top: auto;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .linkbtn {
+        text-decoration: none;
+        font-size: 12px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: var(--card2);
+        color: var(--text);
+      }
+      footer {
+        margin: 16px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+      .kpi {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .kpi .pill {
+        background: var(--card2);
+      }
+
+      /* Hero / top banner */
+      .hero {
+        border-radius: var(--radius);
+        padding: 28px;
+        margin-bottom: 14px;
+        background: linear-gradient(180deg, rgba(14, 165, 164, 0.06), rgba(2, 132, 199, 0.03));
+        border: 1px solid rgba(5, 50, 60, 0.04);
+        box-shadow: 0 12px 30px rgba(2, 24, 36, 0.05);
+      }
+      .hero-inner {
+        display: flex;
+        gap: 18px;
+        align-items: flex-start;
+        justify-content: space-between;
+      }
+      .hero-left {
+        max-width: 72%;
+      }
+      .hero h1 {
+        font-size: 28px;
+        margin: 0 0 8px;
+        font-weight: 800;
+      }
+      .hero .sub {
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .hero-right {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .hero .cta {
+        margin-top: 12px;
+      }
+
+      .card {
+        transition:
+          transform 0.18s ease,
+          box-shadow 0.18s ease;
+      }
+      .card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 18px 36px rgba(2, 24, 36, 0.06);
+      }
+
+      .item img {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+
+      /* typography */
+      body {
+        font-family:
+          'Inter',
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          Roboto,
+          'Helvetica Neue',
+          Arial;
       }
     </style>
   </head>
-  <body class="antialiased min-h-screen flex flex-col">
-    <!-- Navigation -->
-    <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur shadow-sm border-b border-gray-200">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16 items-center">
-          <div class="flex items-center gap-2">
-            <span class="text-2xl">🏍️</span>
-            <div class="text-xl font-bold text-slate-800 tracking-tight">
-              Moto<span class="text-amber-600">Trip</span>
+  <body>
+    <div class="wrap">
+      <section class="hero">
+        <div class="hero-inner">
+          <div class="hero-left">
+            <h1>
+              Lịch trình xe máy 3 người: <span style="color: var(--accent)">Cần Thơ</span> +
+              <span style="color: var(--accent2)">Sóc Trăng (dự phòng)</span>
+            </h1>
+            <div class="sub">
+              Khởi hành <b>trưa 30/1</b> · Tới <b>TP.HCM trước 16:00 ngày 2/2</b>. Gợi ý chia nhịp
+              chạy xe: <b>60–90 phút</b> nghỉ 10–15 phút; an toàn là số 1.
+            </div>
+            <div class="cta">
+              <a href="#itinerary" class="btn primary">Xem lịch trình</a>
+              <a href="#food" class="btn" style="border-color: var(--line)">Khám phá ăn uống</a>
             </div>
           </div>
-          <div class="hidden md:flex space-x-8">
-            <button
-              onclick="scrollToSection('overview')"
-              class="text-slate-600 hover:text-amber-600 font-bold transition">
-              Tổng Quan
-            </button>
-            <button
-              onclick="scrollToSection('itinerary')"
-              class="text-slate-600 hover:text-amber-600 font-bold transition">
-              Lịch Trình
-            </button>
-            <button
-              onclick="scrollToSection('food')"
-              class="text-slate-600 hover:text-amber-600 font-bold transition">
-              Ăn Chơi
-            </button>
-            <button
-              onclick="scrollToSection('checklist')"
-              class="text-slate-600 hover:text-amber-600 font-bold transition">
-              Kiểm Tra Xe
-            </button>
-          </div>
-          <button class="md:hidden text-2xl" onclick="toggleMobileNav()">☰</button>
-        </div>
-      </div>
-      <div id="mobile-nav" class="hidden md:hidden bg-white border-b border-gray-200 p-4 space-y-3">
-        <button
-          onclick="scrollToSection('overview')"
-          class="block w-full text-left text-slate-700 font-bold">
-          Tổng Quan
-        </button>
-        <button
-          onclick="scrollToSection('itinerary')"
-          class="block w-full text-left text-slate-700 font-bold">
-          Lịch Trình
-        </button>
-        <button
-          onclick="scrollToSection('food')"
-          class="block w-full text-left text-slate-700 font-bold">
-          Ăn Chơi
-        </button>
-        <button
-          onclick="scrollToSection('checklist')"
-          class="block w-full text-left text-slate-700 font-bold">
-          Kiểm Tra Xe
-        </button>
-      </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section id="overview" class="pt-10 pb-8 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full">
-      <div class="text-center mb-10">
-        <span
-          class="inline-block py-1 px-3 rounded bg-amber-100 text-amber-800 text-xs font-black uppercase tracking-wider mb-3"
-          >Trip 3 Người - 2 Xe</span
-        >
-        <h1 class="text-4xl sm:text-6xl font-black text-slate-900 mb-6 tracking-tighter">
-          PHƯỢT
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-500"
-            >CẦN THƠ</span
-          >
-        </h1>
-
-        <p class="text-lg text-slate-700 max-w-2xl mx-auto font-medium leading-relaxed">
-          Xuất phát: <span class="font-bold text-amber-600">13:00 ngày 30/1</span>. <br />
-          Tranh thủ tới sớm nhận phòng, nghỉ ngơi để 31/1 chơi trọn vẹn.
-        </p>
-      </div>
-
-      <!-- Quick Stats Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        <div class="bg-white p-6 rounded-xl border-l-4 border-amber-500 shadow-sm">
-          <div class="text-3xl mb-2">☀️</div>
-          <h3 class="font-bold text-slate-800 text-lg">Chạy Nắng 13H</h3>
-          <p class="text-slate-600 text-sm mt-1">
-            Đoạn đầu sẽ nắng. Nhớ mặc áo khoác dày, kính râm và uống nước đủ.
-          </p>
-        </div>
-        <div class="bg-white p-6 rounded-xl border-l-4 border-blue-500 shadow-sm">
-          <div class="text-3xl mb-2">🏁</div>
-          <h3 class="font-bold text-slate-800 text-lg">Đến Sớm 17H30</h3>
-          <p class="text-slate-600 text-sm mt-1">
-            Check-in xong trời vừa mát. Kịp thời gian đi dạo Ninh Kiều buổi tối.
-          </p>
-        </div>
-        <div class="bg-white p-6 rounded-xl border-l-4 border-emerald-500 shadow-sm">
-          <div class="text-3xl mb-2">💰</div>
-          <h3 class="font-bold text-slate-800 text-lg">Chia 3 Cực Rẻ</h3>
-          <p class="text-slate-600 text-sm mt-1">
-            Dư dả ăn uống tại các quán hot: Phố Nướng 102, Lẩu Vịt...
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Itinerary Section -->
-    <section id="itinerary" class="py-12 bg-white w-full">
-      <div class="max-w-5xl mx-auto px-4 sm:px-6">
-        <div class="mb-10 text-center">
-          <h2 class="text-3xl font-black text-slate-900 uppercase">Lịch Trình</h2>
-          <p class="text-slate-500 mt-1">Bấm vào các tab để xem chi tiết.</p>
-        </div>
-
-        <!-- Tabs -->
-        <div class="flex justify-center mb-8 space-x-2 sm:space-x-4 overflow-x-auto">
-          <button
-            onclick="switchDay(0)"
-            id="tab-day0"
-            class="px-4 py-2 rounded font-bold transition bg-amber-600 text-white shadow-md border-2 border-amber-600 whitespace-nowrap">
-            Chiều 30/1
-          </button>
-          <button
-            onclick="switchDay(1)"
-            id="tab-day1"
-            class="px-4 py-2 rounded font-bold transition bg-slate-100 text-slate-600 border-2 border-transparent whitespace-nowrap">
-            Ngày 31/1
-          </button>
-          <button
-            onclick="switchDay(2)"
-            id="tab-day2"
-            class="px-4 py-2 rounded font-bold transition bg-slate-100 text-slate-600 border-2 border-transparent whitespace-nowrap">
-            Ngày 1/2
-          </button>
-          <button
-            onclick="switchDay(3)"
-            id="tab-day3"
-            class="px-4 py-2 rounded font-bold transition bg-slate-100 text-slate-600 border-2 border-transparent whitespace-nowrap">
-            Sáng 2/2
-          </button>
-        </div>
-
-        <div
-          class="relative border-l-4 border-slate-200 ml-4 md:ml-6 pl-8 space-y-8"
-          id="timeline-content">
-          <!-- Content injected via JS -->
-        </div>
-      </div>
-    </section>
-
-    <!-- Food Section -->
-    <section id="food" class="py-12 bg-slate-50 w-full">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6">
-        <div class="text-center mb-10">
-          <h2 class="text-3xl font-black text-slate-900 uppercase">Địa Điểm Đã Chọn</h2>
-          <div class="flex justify-center gap-2 mt-5">
-            <button
-              onclick="filterFood('all')"
-              class="food-filter-btn px-5 py-2 rounded font-bold bg-slate-800 text-white transition shadow hover:bg-slate-700">
-              Tất cả
-            </button>
-            <button
-              onclick="filterFood('main')"
-              class="food-filter-btn px-5 py-2 rounded font-bold bg-white text-slate-600 border border-slate-300 transition hover:bg-slate-100">
-              Ăn Chính/Nhậu
-            </button>
-            <button
-              onclick="filterFood('snack')"
-              class="food-filter-btn px-5 py-2 rounded font-bold bg-white text-slate-600 border border-slate-300 transition hover:bg-slate-100">
-              Ăn Vặt
-            </button>
-          </div>
-        </div>
-
-        <!-- Grid -->
-        <div id="food-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <!-- Injected via JS -->
-        </div>
-      </div>
-    </section>
-
-    <!-- Budget Section -->
-    <section class="py-12 bg-white w-full border-t border-slate-200">
-      <div class="max-w-4xl mx-auto px-4 sm:px-6">
-        <h2 class="text-2xl font-bold text-slate-900 text-center mb-4">Tổng Chi Phí (3 Người)</h2>
-        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-          <div class="chart-container mx-auto">
-            <canvas id="budgetChart"></canvas>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Biker Checklist -->
-    <section id="checklist" class="py-8 bg-slate-900 text-white w-full">
-      <div class="max-w-4xl mx-auto px-4 sm:px-6">
-        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
-          <span>🔧</span> Bảo Dưỡng 2 Xe (Quan Trọng)
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div
-            class="flex items-center gap-3 p-3 bg-slate-800 rounded border border-slate-700 hover:border-amber-500 transition cursor-pointer"
-            onclick="document.getElementById('check1').click()">
-            <input type="checkbox" id="check1" class="biker-check w-5 h-5 accent-amber-500" />
-            <label for="check1" class="cursor-pointer select-none"
-              >Đổ đầy bình xăng trước khi xuất phát</label
-            >
-          </div>
-          <div
-            class="flex items-center gap-3 p-3 bg-slate-800 rounded border border-slate-700 hover:border-amber-500 transition cursor-pointer"
-            onclick="document.getElementById('check2').click()">
-            <input type="checkbox" id="check2" class="biker-check w-5 h-5 accent-amber-500" />
-            <label for="check2" class="cursor-pointer select-none"
-              >2 Gương chiếu hậu (Miền Tây bắt gắt)</label
-            >
-          </div>
-          <div
-            class="flex items-center gap-3 p-3 bg-slate-800 rounded border border-slate-700 hover:border-amber-500 transition cursor-pointer"
-            onclick="document.getElementById('check3').click()">
-            <input type="checkbox" id="check3" class="biker-check w-5 h-5 accent-amber-500" />
-            <label for="check3" class="cursor-pointer select-none">Kiểm tra lốp xe & thắng</label>
-          </div>
-          <div
-            class="flex items-center gap-3 p-3 bg-slate-800 rounded border border-slate-700 hover:border-amber-500 transition cursor-pointer"
-            onclick="document.getElementById('check4').click()">
-            <input type="checkbox" id="check4" class="biker-check w-5 h-5 accent-amber-500" />
-            <label for="check4" class="cursor-pointer select-none"
-              >Áo khoác dày, kính râm (Đi 13h rất nắng)</label
-            >
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Chat Widget -->
-    <div class="chat-widget">
-      <div class="chat-window" id="chatWindow">
-        <div class="chat-header">
-          <div class="flex items-center gap-2">
-            <span class="text-xl">🤠</span>
-            <div>
-              <div class="font-bold text-sm">Thổ Địa Cần Thơ AI</div>
-              <div class="text-xs text-amber-200">Online</div>
+          <div class="hero-right">
+            <div class="pills">
+              <div class="pill"><b>Plan A</b> ở Cần Thơ</div>
+              <div class="pill"><b>Plan B</b> rẽ Sóc Trăng</div>
+              <div class="pill"><b>Chọn nhanh</b> bằng nút bên dưới</div>
             </div>
           </div>
-          <button onclick="toggleChat()" class="text-white hover:text-amber-400">✕</button>
         </div>
-        <div class="chat-messages" id="chatMessages">
-          <div class="message ai">
-            Chào 3 đại ca! Xuất phát 1h trưa thì hơi nắng nha, nhớ trùm kín mít vào. Tới Cần Thơ tầm
-            chiều mát là đẹp. Cần gì hú tui! 🍻
+      </section>
+
+      <div class="tabs">
+        <div class="tab active" data-tab="itinerary">🗓️ Lịch trình</div>
+        <div class="tab" data-tab="food">🍜 Món ăn & địa điểm (có ảnh)</div>
+        <div class="tab" data-tab="tips">🛵 Tips chạy xe</div>
+      </div>
+
+      <div id="itinerary" class="grid">
+        <div class="card">
+          <div class="hd">
+            <h2>Lịch trình tổng quát (có nhánh dự phòng)</h2>
+            <div class="mini">Chọn Plan để tự tô nổi các block</div>
+          </div>
+          <div class="bd">
+            <div class="controls">
+              <div class="btn primary" id="pickA">Plan A: Cần Thơ trọn</div>
+              <div class="btn secondary" id="pickB">Plan B: Rẽ Sóc Trăng</div>
+              <div class="btn" id="pickMix">Mix: Cần Thơ → Sóc Trăng</div>
+              <div class="btn" id="reset">Reset</div>
+            </div>
+            <div class="hint">
+              *Plan B hợp khi bạn thấy Cần Thơ “không vui” hoặc muốn đổi gió văn hoá Khmer/ẩm thực
+              Sóc Trăng.
+            </div>
+
+            <div class="timeline" id="timeline"></div>
           </div>
         </div>
-        <div class="chat-input-area">
-          <input
-            type="text"
-            id="userQuery"
-            placeholder="Hỏi gì đó..."
-            onkeypress="handleKeyPress(event)" />
-          <button
-            onclick="sendMessage()"
-            class="bg-amber-600 text-white p-2 rounded-full hover:bg-amber-700 w-10 h-10 flex items-center justify-center">
-            ➤
-          </button>
+
+        <div class="card">
+          <div class="hd">
+            <h2>Điểm nhấn nên ưu tiên</h2>
+            <div class="mini">Nhanh – gọn – đã</div>
+          </div>
+          <div class="bd">
+            <div class="kpi">
+              <div class="pill"><b>Cần Thơ:</b> Chợ nổi Cái Răng, bờ kè sông Hậu, chợ đêm</div>
+              <div class="pill"><b>Sóc Trăng:</b> Chùa (Dơi / Chén Kiểu), bún nước lèo</div>
+              <div class="pill"><b>Ăn:</b> lẩu mắm · bánh cống · nem nướng · chuối nướng</div>
+            </div>
+            <div class="hint" style="margin-top: 10px">
+              Mẹo quyết định nhanh ngày <b>1/2</b>: nếu buổi sáng 31/1 bạn đã “xem đủ” Cần Thơ, thì
+              <b>trưa 1/2</b> chạy Sóc Trăng, tối ngủ 1 đêm rồi <b>sáng 2/2</b> quay về TP.HCM.
+            </div>
+            <div class="hint">
+              Thời lượng chạy xe tham khảo: <b>TP.HCM → Cần Thơ ~ 3.5–4.5h</b>,
+              <b>Cần Thơ → Sóc Trăng ~ 1.5–2h</b>, <b>Sóc Trăng → TP.HCM ~ 5–6h</b>.
+            </div>
+          </div>
         </div>
       </div>
-      <div class="chat-button" onclick="toggleChat()">💬</div>
-    </div>
 
-    <!-- Modal for Food Review -->
-    <div class="modal-overlay" id="reviewModal" onclick="closeReview(event)">
-      <div class="modal-content">
-        <div class="flex justify-between items-center mb-4 border-b pb-2">
-          <h3 class="text-xl font-bold text-slate-800" id="reviewTitle">Review Món Ăn</h3>
-          <button onclick="closeReview(null)" class="text-slate-500 hover:text-red-500 text-2xl">
-            ×
-          </button>
+      <div id="food" class="grid" style="display: none">
+        <div class="card">
+          <div class="hd">
+            <h2>Danh sách món ăn & địa điểm</h2>
+            <div class="mini">Tìm nhanh · có ảnh preview</div>
+          </div>
+          <div class="bd">
+            <input
+              id="q"
+              class="search"
+              placeholder="Tìm món/điểm… ví dụ: lẩu mắm, chợ nổi, chùa, bún…" />
+            <div class="chips">
+              <div class="chip active" data-city="all">Tất cả</div>
+              <div class="chip" data-city="Cần Thơ">Cần Thơ</div>
+              <div class="chip" data-city="Sóc Trăng">Sóc Trăng</div>
+              <div class="chip" data-type="food">Chỉ món ăn</div>
+              <div class="chip" data-type="place">Chỉ điểm đi chơi</div>
+            </div>
+            <div class="items" id="items"></div>
+            <div class="hint">
+              Nếu thẻ nào ảnh bị chặn bởi trang nguồn, bạn vẫn có preview bằng “ảnh minh hoạ” (tự
+              tạo).
+            </div>
+          </div>
         </div>
-        <div id="reviewContent" class="text-slate-600 leading-relaxed">
-          <!-- Content from AI -->
+
+        <div class="card">
+          <div class="hd">
+            <h2>Gợi ý combo ăn – chơi</h2>
+            <div class="mini">Theo khu vực</div>
+          </div>
+          <div class="bd">
+            <div class="hint">
+              <span class="badge accent">Cần Thơ</span><b>Sáng</b>: Chợ nổi Cái Răng → pizza hủ tiếu
+              / trái cây chợ nổi.
+            </div>
+            <div class="hint">
+              <span class="badge accent">Cần Thơ</span><b>Tối</b>: Bờ kè sông Hậu → chợ đêm → chuối
+              nướng.
+            </div>
+            <div class="hint">
+              <span class="badge alt">Sóc Trăng</span><b>Sáng</b>: Bún nước lèo → chùa Dơi → chùa
+              Chén Kiểu.
+            </div>
+            <div class="hint">
+              <span class="badge alt">Sóc Trăng</span><b>Tối</b>: Bún gỏi dà / bò nướng ngói → dạo
+              phố.
+            </div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <footer class="bg-slate-900 text-slate-400 py-8 text-center mt-auto">
-      <p class="mb-2 text-clg text-white font-bold">Thượng Lộ Bình An nhé 3 Bro! 🏍️💨</p>
-    </footer>
+      <div id="tips" class="grid" style="display: none">
+        <div class="card">
+          <div class="hd">
+            <h2>Checklist chạy xe máy (3 người)</h2>
+            <div class="mini">An toàn là số 1</div>
+          </div>
+          <div class="bd">
+            <div class="hint">
+              <span class="badge warn">Đồ bắt buộc</span> mũ chuẩn, áo mưa, găng tay, kính, giấy tờ
+              xe, sạc + giá đỡ điện thoại.
+            </div>
+            <div class="hint">
+              <span class="badge warn">Xe</span> kiểm tra lốp/phanh/đèn, thay nhớt nếu gần tới kỳ,
+              bơm lốp chuẩn.
+            </div>
+            <div class="hint">
+              <span class="badge warn">Nhịp chạy</span> 60–90 phút nghỉ 10–15 phút; không cố chạy
+              đêm khi mệt.
+            </div>
+            <div class="hint">
+              <span class="badge warn">Đường</span> đi theo QL1A / cao tốc (tuỳ tuyến), giữ tốc độ
+              ổn định, tránh vượt ẩu.
+            </div>
+            <div class="hint">
+              <span class="badge warn">Chi phí</span> chuẩn bị tiền mặt lẻ + dự phòng (xăng, gửi xe,
+              vé tàu chợ nổi).
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="hd">
+            <h2>Gợi ý giờ xuất phát để kịp 16:00 ngày 2/2</h2>
+            <div class="mini">Tuỳ bạn ngủ ở đâu đêm 1/2</div>
+          </div>
+          <div class="bd">
+            <div class="hint">
+              <span class="badge accent">Ngủ Cần Thơ</span> 2/2: xuất phát <b>07:30–08:00</b> → về
+              TP.HCM khoảng <b>12:30–14:30</b>.
+            </div>
+            <div class="hint">
+              <span class="badge alt">Ngủ Sóc Trăng</span> 2/2: xuất phát <b>06:30–07:00</b> → về
+              TP.HCM khoảng <b>13:30–16:00</b> (tuỳ kẹt xe).
+            </div>
+            <div class="hint">Nếu trời mưa/kẹt xe: tăng buffer 30–60 phút, ưu tiên về sớm.</div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        Dữ liệu món/điểm được lấy từ 2 file bạn cung cấp (Cần Thơ.xlsx & Sóc Trăng.xlsx). Ảnh
+        preview là “best-effort” từ nhiều nguồn trên web; một số thẻ dùng ảnh minh hoạ để đảm bảo
+        thẻ nào cũng có preview.
+      </footer>
+    </div>
 
     <script>
-      // --- Gemini API Configuration ---
-      const apiKey = 'AIzaSyC0LXyuNgZuYO8fw5G4gxKlhl9vao8KRuk';
-
-      // Helper to call Gemini
-      async function callGemini(prompt, systemInstruction = '') {
-        if (!apiKey) {
-          return 'Chưa có API Key. (Chế độ giả lập: Đi 13h nhớ uống nước nhiều nha đại ca!)';
-        }
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-        const payload = {
-          contents: [{ parts: [{ text: prompt }] }],
-          systemInstruction: { parts: [{ text: systemInstruction }] }
-        };
-        try {
-          const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
-          if (!response.ok) throw new Error('API Error');
-          const data = await response.json();
-          return data.candidates?.[0]?.content?.parts?.[0]?.text || 'Lỗi mạng rồi đại ca ơi!';
-        } catch (error) {
-          console.error('Gemini Error:', error);
-          return 'Lỗi kết nối vệ tinh.';
-        }
-      }
-
-      // --- Custom Data ---
-      const foodData = [
-        {
-          name: 'Lẩu Vịt Cây Trứng Cá',
-          type: 'main',
-          address: 'Đường Hoàng Quốc Việt (gần Thốt Nốt)',
-          mapLink:
-            'https://www.google.com/maps/search/?api=1&query=Lẩu+vịt+nấu+chao+cây+trứng+cá+cần+thơ',
-          tiktok:
-            'https://www.tiktok.com/@didauofficial/video/7323148355784248578?is_from_webapp=1&sender_device=pc&web_id=7598236609910621704',
-          desc: 'Món ăn hồi sức cực tốt cho 3 anh em. Vịt mềm, chao béo.',
-          img: 'https://scontent.fhan3-2.fna.fbcdn.net/v/t39.30808-6/496154613_2485025641831032_2422235189345591083_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=aa7b47&_nc_ohc=F2Jp_vudC3MQ7kNvwG1K3jR&_nc_oc=AdkFvN0rag8nTahKOSLQc68h55gjgAqb_6azfktbTWhkWwPs3_o-eGLOYs_BGs_5oqI&_nc_zt=23&_nc_ht=scontent.fhan3-2.fna&_nc_gid=b5gJzAYy3ls4e1q-yqtbEw&oh=00_AfrpZ5mwBq7w7wXk1Niq5QKUWK24OQHOZ0RptTe-K8vM7Q&oe=697A0325'
-        },
-        {
-          name: 'Nem Nướng Cô Thu',
-          type: 'main',
-          address: 'Đường Phạm Hùng, Lê Bình, Cái Răng',
-          mapLink: 'https://www.google.com/maps/search/?api=1&query=Nem+nướng+Cái+Răng+Cô+Thu',
-          tiktok:
-            'https://www.tiktok.com/@loanhquanhmientay/video/7362160315330481424?is_from_webapp=1&sender_device=pc&web_id=7598236609910621704',
-          desc: 'Đặc sản Cái Răng. Cuốn nem nóng với bánh hỏi.',
-          img: 'https://dantocmiennui-media.baotintuc.vn/images/57c5aab70c5efc5a98d240302ffc6edbcf0533580b040d14fdc8bc33ffa64029cb69bc977eb508fbc9a95eef3e2501d1a1953ec9b67cc2ae3bb6fb8a4fddd937e2f70135d22d21a88dc4a7c7b5fcf1dd/99adb57ced9be9eb6f949275625d8ce6-1.jpg'
-        },
-        {
-          name: 'Phố Nướng 102',
-          type: 'main',
-          address: '16B Trần Hoàng Na, Cần Thơ',
-          mapLink: 'https://www.google.com/maps/search/?api=1&query=Phố+Nướng+102+Cần+Thơ',
-          tiktok:
-            'https://www.tiktok.com/@vovulamreview/video/7511191213362433288?is_from_webapp=1&sender_device=pc&web_id=7598236609910621704',
-          desc: 'Quán nhậu bình dân, không gian rộng rãi, thích hợp tăng 2.',
-          img: 'https://lh3.googleusercontent.com/p/AF1QipNZAeIE5TFYnWN44QqnmJi3EXLisF2svBWBMK8l=s1360-w1360-h1020-rw'
-        },
-        {
-          name: 'Lẩu Mắm Kiều Trinh',
-          type: 'main',
-          address: '26 Trần Khánh Dư, Cần Thơ',
-          mapLink: 'https://www.google.com/maps/search/?api=1&query=Lẩu+mắm+Kiều+Trinh+Cần+Thơ',
-          tiktok: 'https://www.tiktok.com/@embedichoi0/video/7593964647628197138',
-          desc: 'Lẩu mắm đậm đà, chuẩn vị miền Tây.',
-          img: 'https://lh3.googleusercontent.com/gps-cs-s/AHVAweoJ8lzrl0GGegX9VPoKFrE5xIAPOhzfH4-s21DjQS18SzlxTyubWh50cb1u51zZ_hIIxaUwzW3-DeXBhu4kgEfU-39B2V_5Uo_2Eyd_dgvzHdo7p7hCO3QQ-GUsBI87G-OUrIw36A=s1360-w1360-h1020-rw'
-        },
-        {
-          name: 'Bánh Cống Cô Út',
-          type: 'snack',
-          address: '86/38 Lý Tự Trọng, Cần Thơ',
-          mapLink: 'https://maps.app.goo.gl/dZbWcMeZjFBkchsh9',
-          tiktok: 'https://www.tiktok.com/@phukien65cantho/video/7542728369830399239',
-          desc: 'Bánh cống giòn rụm trong hẻm nhỏ.',
-          img: 'https://canthoriviu.vn/wp-content/uploads/2023/05/1_1753_60118284-1-1.jpeg'
-        },
-        {
-          name: 'Pizza Hủ Tiếu',
-          type: 'snack',
-          address: 'Lò Sáu Hoài / Chợ Nổi',
-          mapLink: 'https://maps.app.goo.gl/CBn8JDk5cusrmmaF6',
-          tiktok: 'https://www.tiktok.com/@dulichcantho02/video/7491974815553801479',
-          desc: 'Hủ tiếu chiên giòn ăn như snack.',
-          img: 'https://vcdn1-dulich.vnecdn.net/2022/01/06/A-nh-3-4785-1628743117-3153-1641453317.jpg?w=680&h=0&q=100&dpr=2&fit=crop&s=TW4nEyCRGrEfJUig6VJtEA'
-        },
-        {
-          name: 'Chuối Nếp Nướng',
-          type: 'snack',
-          address: 'Chợ Cái Khế, Nguyễn Đức Cảnh',
-          mapLink: 'https://www.google.com/maps/search/?api=1&query=Chợ+Cái+Khế+Cần+Thơ',
-          tiktok:
-            'https://www.tiktok.com/@trangduongdaily/video/7584051606354791687?is_from_webapp=1&sender_device=pc&web_id=7598236609910621704',
-          desc: 'Chuối bọc nếp nướng thơm lừng cốt dừa.',
-          img: 'https://cdn.tgdd.vn/Files/2018/04/26/1084640/chuoi-boc-nep-nuong-thom-ngon-kho-cuong-ma-cuc-de-lam-1-760x367.jpg'
-        }
-      ];
-
-      // --- ITINERARY DATA ---
-      const itineraryData = {
-        0: [
-          // Day 0: 30/1
+      const DATA = {
+        canTho: [
           {
-            time: '13:00',
-            title: 'Xuất phát (SG)',
-            desc: 'Trời nắng 1h trưa. Nhớ mặc kín, đeo kính râm. Chạy cẩn thận.',
-            icon: '☀️'
+            city: 'Cần Thơ',
+            name: 'Phố Nướng 102',
+            address: '16B Đ. Trần Hoàng Na, An Bình, Ninh Kiều, Cần Thơ, Vietnam',
+            link: null,
+            type: 'food',
+            image:
+              'https://lh4.googleusercontent.com/proxy/e6DHC5NAGhX6fnn0h2BIIbv4nKDThMtn4JbeJMu6k1aBpq6U22e63aMA5Io8kJyThrWCcqoWVID2WOVgdiuCTHR4tJrb3HEmzhMsUot4QrnNTcA6G9E_8PrIyyiCkYeQqSjQugX0HjuQ21Tpt9c'
           },
           {
-            time: '15:30',
-            title: 'Nghỉ Chân Tiền Giang',
-            desc: 'Nghỉ võng, uống nước mía/dừa tươi giải nhiệt tầm 30p.',
-            icon: '🛑'
+            city: 'Cần Thơ',
+            name: 'Trái cây Chợ Nổi',
+            address: null,
+            link: null,
+            type: 'place',
+            image:
+              'https://dulichcanhviet.com.vn/uploads/noidung/images/du-lich-canh-viet-ve-soc-trang-tham-cho-noi-nga-nam-10.png'
           },
           {
-            time: '17:30',
-            title: 'Check-in Cần Thơ',
-            desc: 'Tới nơi lúc trời dịu mát. Nhận phòng, tắm rửa cho khỏe.',
-            icon: '🏁'
+            city: 'Cần Thơ',
+            name: 'Bánh cống cô út Nguyễn Trãi',
+            address: '86/38 Lý Tự Trọng, Tân An, Ninh Kiều, Cần Thơ, Vietnam',
+            link: 'https://www.tiktok.com/@phukien65cantho/video/7542728369830399239?is_from_webapp=1&sender_device=pc&web_id=7598236609910621704',
+            type: 'food',
+            image: 'https://canthoriviu.vn/wp-content/uploads/2023/05/1_1753_60118284-1-1.jpeg'
           },
           {
-            time: '19:00',
-            title: 'Dạo Bến Ninh Kiều',
-            desc: 'Ra bờ kè hóng gió, ngắm tượng Bác Hồ, Cầu Tình Yêu.',
-            icon: '🌃'
+            city: 'Cần Thơ',
+            name: 'Lẩu mắm kiều trinh',
+            address: '26 Đ. Trần Khánh Dư, Xuân Khánh, Ninh Kiều, Cần Thơ, Vietnam',
+            link: 'https://www.tiktok.com/@embedichoi0/video/7593964647628197138?is_from_webapp=1&sender_device=pc&web_id=7598236609910621704',
+            type: 'food',
+            image:
+              'https://down-vn.img.susercontent.com/vn-11134513-7r98o-lsuaubw6kfd09a@resize_ss640x400'
           },
           {
-            time: '20:30',
-            title: 'Ăn Tối Nhẹ',
-            desc: 'Bún nước lèo hoặc Hủ tiếu gõ khuya.',
-            icon: '🍜'
+            city: 'Cần Thơ',
+            name: 'Pizza hủ tiếu',
+            address: 'Chợ nổi Cái Răng',
+            link: 'https://www.tiktok.com/@dulichcantho02/video/7491974815553801479?is_from_webapp=1&sender_device=pc&web_id=7598236609910621704',
+            type: 'food',
+            image:
+              'https://vcdn1-dulich.vnecdn.net/2022/01/06/A-nh-3-4785-1628743117-3153-1641453317.jpg?w=680&h=0&q=100&dpr=2&fit=crop&s=TW4nEyCRGrEfJUig6VJtEA'
+          },
+          {
+            city: 'Cần Thơ',
+            name: 'Chuối bếp nướng',
+            address: 'Chợ cái khế, Đường Nguyễn Đức Cảnh, Ninh Kiều, Cần Thơ',
+            link: 'https://www.tiktok.com/@trangduongdaily/video/7584051606354791687?is_from_webapp=1&sender_device=pc&web_id=7598236609910621704',
+            type: 'food',
+            image:
+              'https://cdn.tgdd.vn/Files/2018/04/26/1084640/chuoi-boc-nep-nuong-thom-ngon-kho-cuong-ma-cuc-de-lam-1-760x367.jpg'
+          },
+          {
+            city: 'Cần Thơ',
+            name: 'Lẩu vịt nấu chao cây trứng cá',
+            address: 'đường Hoàng Quốc Việt',
+            link: 'https://www.tiktok.com/@vivucanthorv/video/7476470377191886087?is_from_webapp=1&sender_device=pc&web_id=7598236609910621704',
+            type: 'food',
+            image:
+              'https://cdn.tgdd.vn/Files/2021/09/01/1379400/cach-nau-lau-vit-nau-chao-thom-lung-hap-dan-tai-nha-202109010014404052.jpg'
+          },
+          {
+            city: 'Cần Thơ',
+            name: 'Nem Nướng Cái Răng Cô Thu',
+            address: '84/2 Đ. Phạm Hùng, Lê Bình, Cái Răng, Cần Thơ, Vietnam',
+            link: 'https://www.tiktok.com/@b_thao.6/video/7362504217124211975?is_from_webapp=1&sender_device=pc&web_id=7598236609910621704',
+            type: 'food',
+            image:
+              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgGQKYZN8YYtZImuL_LIDUC5I4SXJWawIzwA&s'
+          },
+          {
+            city: 'Cần Thơ',
+            name: 'Chợ đêm cần thơ',
+            address: null,
+            link: null,
+            type: 'place',
+            image:
+              'https://media.gody.vn//images/can-tho/cho-dem-tay-do/4-2017/20170415030137-cho-dem-tay-do-gody(2).jpg'
+          },
+          {
+            city: 'Cần Thơ',
+            name: 'Công viên bờ kè sông Hậu',
+            address: null,
+            link: null,
+            type: 'place',
+            image:
+              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBRuwmslJbkh7ZYNztmQFSfojh2loMcqfJuA&s'
+          },
+          {
+            city: 'Cần Thơ',
+            name: 'Chợ nổi cái răng',
+            address: null,
+            link: null,
+            type: 'place',
+            image:
+              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOvPNDeL9G7gMgZbKcw4NtcZeXNAN4GLM4Jw&s'
+          },
+          {
+            city: 'Cần Thơ',
+            name: 'Nhà cổ Bình Thủy',
+            address: ' 144 Đ. Bùi Hữu Nghĩa, Bình Thuỷ, Bình Thủy, Cần Thơ',
+            link: 'https://maps.app.goo.gl/YBprxEPz4cUCeiHdA',
+            type: 'place',
+            image:
+              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqB4mezLO6yXYQl0sEVbh4VeOo4VkmhahayQ&s'
+          },
+          {
+            city: 'Cần Thơ',
+            name: 'Cồn Sơn',
+            address: null,
+            link: 'https://maps.app.goo.gl/Zr5gnQmS6JNq2tSn7',
+            type: 'place',
+            image:
+              'https://media-cdn-v2.laodong.vn/storage/newsportal/2025/7/24/1545825/Con-Son-1-01.jpg'
           }
         ],
-        1: [
-          // Day 1: 31/1
+        socTrang: [
           {
-            time: '09:00',
-            title: 'Cafe Sáng',
-            desc: 'Ngủ nướng xíu rồi đi cafe vợt/view sông lấy lại năng lượng.',
-            icon: '☕'
+            city: 'Sóc Trăng',
+            name: 'Bò nướng ngói Sóc Trăng',
+            address: '25 Lý Tự Trọng, Phường 2, TP Sóc Trăng',
+            link: 'https://www.tiktok.com/@qadq.133/video/7492749933347409159?_r=1&_t=ZS-93QQo5KSjrz',
+            type: 'food',
+            image:
+              'https://www.vietfuntravel.com.vn/image/data/Blog/AmThuc/thom-lung-mon-bo-nuong-ngoi-o-soc-trang/thom-lung-mon-bo-nuong-ngoi-o-soc-trang-h4.jpg'
           },
           {
-            time: '11:30',
-            title: 'Lẩu Vịt Cây Trứng Cá',
-            desc: 'Ăn trưa món này là đúng bài hồi sức.',
-            icon: '🍲'
-          },
-          { time: '13:30', title: 'Nhà Cổ Bình Thủy', desc: 'Tham quan nhà cổ.', icon: '🏛️' },
-          {
-            time: '15:00',
-            title: 'Cồn Sơn (Option)',
-            desc: 'Tiện đường đi luôn. Xem cá lóc bay, đi cầu khỉ. Nếu mệt thì bỏ qua.',
-            icon: '🐟',
-            isOptional: true
+            city: 'Sóc Trăng',
+            name: 'Bún Gỏi Dà',
+            address: '13 Nguyễn Văn Hữu, P1, Sóc Trăng',
+            link: 'https://www.tiktok.com/@nguyenhancaheo/video/7314665719772269826?_r=1&_t=ZS-93QRNmEPZsQ',
+            type: 'food',
+            image:
+              'https://cdn.tgdd.vn/Files/2020/07/11/1269717/cach-nau-bun-goi-da-soc-trang-dung-chuan-202007111632099549.jpg'
           },
           {
-            time: '17:00',
-            title: 'Bánh Cống Cô Út',
-            desc: 'Về trung tâm ăn xế món này.',
-            icon: '🥟'
+            city: 'Sóc Trăng',
+            name: 'Bánh cống Đại Tâm',
+            address: '15 giờ tại 104 QL1A, Đại Tâm, Mỹ Xuyên',
+            link: 'https://www.tiktok.com/@thodianne/video/7330187529808874770?_r=1&_t=ZS-93QRaeDgM6y',
+            type: 'food',
+            image:
+              'https://dantocmiennui-media.baotintuc.vn/images/84426cb421b40f0fbef0009243df48a9579cd3ee33d6f41be693cb34d8c815b47dfc4ef229eb0208b4439d19b3041a745c581011507518ecb534355508830c4e/banh_cong_dai_tam_2B.JPG'
           },
           {
-            time: '19:30',
-            title: 'Chợ Đêm & Chợ Cổ',
-            desc: 'Đi dạo chợ đêm Tây Đô, mua sắm linh tinh.',
-            icon: '🛍️'
-          }
-        ],
-        2: [
-          // Day 2: 1/2
-          {
-            time: '05:30',
-            title: 'Chợ Nổi Cái Răng',
-            desc: 'Đi sớm. Thuê 1 ghe riêng cho 3 người.',
-            icon: '🚤'
+            city: 'Sóc Trăng',
+            name: 'Bún nước lèo',
+            address: '1 Phú Lợi, Sóc Trăng',
+            link: 'https://www.tiktok.com/@thantaisoctrang/video/7391037688012344593?_r=1&_t=ZS-93QRfceWi7c',
+            type: 'food',
+            image:
+              'https://hanoidep.vn/wp-content/uploads/2025/10/to-bun-nuoc-leo-thao-soc-trang-voi-day-du-tom-tuoi-thit-heo-quay-quay-va-rau-song.webp'
           },
           {
-            time: '07:00',
-            title: 'Ăn Sáng trên Ghe',
-            desc: 'Pizza hủ tiếu + Trái cây.',
-            icon: '🍍'
+            city: 'Sóc Trăng',
+            name: 'Đường Hoa Kèn Hồng',
+            address: 'Đường Hùng Vương, Châu Thành, Sóc Trăng',
+            link: null,
+            type: 'place',
+            image:
+              'https://media.vov.vn/sites/default/files/styles/large_watermark/public/2023-03/1.1.jpg'
           },
           {
-            time: '11:30',
-            title: 'Nem Nướng Cô Thu',
-            desc: 'Đường Phạm Hùng (Cái Răng). Ăn trưa tiện đường về.',
-            icon: '🥓'
+            city: 'Sóc Trăng',
+            name: 'Chùa La Hán',
+            address: '63/8 Đ. Phạm Ngọc Thạch, Phường 8, Sóc Trăng',
+            link: null,
+            type: 'place',
+            image:
+              'https://mia.vn/media/uploads/blog-du-lich/chua-la-han-diem-den-tam-linh-dep-tua-co-tich-tai-soc-trang-01-1664443303.jpeg'
           },
-          { time: '14:00', title: 'Ngủ Trưa', desc: 'Về khách sạn tránh nắng.', icon: '🛌' },
-          { time: '18:00', title: 'Lẩu Mắm Kiều Trinh', desc: 'Món chính buổi tối.', icon: '🍲' },
           {
-            time: '20:30',
-            title: 'Phố Nướng 102',
-            desc: 'Tăng 2: Ngồi lai rai tới bến.',
-            icon: '🍻'
-          }
-        ],
-        3: [
-          // Day 3: 2/2
-          { time: '08:00', title: 'Cafe & Checkout', desc: 'Cafe sáng, trả phòng.', icon: '☕' },
+            city: 'Sóc Trăng',
+            name: 'Chùa Peam Buôl Thmây',
+            address: ' 948 Đ. Lý Thường Kiệt, Phường 4, Sóc Trăng',
+            link: null,
+            type: 'place',
+            image:
+              'https://images.baodantoc.vn/uploads/2022/Th%C3%A1ng_10/k%E1%BB%89%20ni%E1%BB%87m%20b%C3%A1o/trang%2040-42/P%20-%202%20.jpg'
+          },
           {
-            time: '10:30',
-            title: 'Về Sài Gòn',
-            desc: 'Lên đường về. Kết thúc hành trình.',
-            icon: '🔙'
+            city: 'Sóc Trăng',
+            name: 'Chùa Chén Kiểu',
+            address: 'GWQC+64G, QL1A, Đại Tâm, Mỹ Xuyên, Sóc Trăng',
+            link: null,
+            type: 'place',
+            image: 'https://thamhiemmekong.com/wp-content/uploads/2020/04/chuachenkieu-1.jpg'
+          },
+          {
+            city: 'Sóc Trăng',
+            name: 'Chùa Dơi',
+            address: '418 Văn Ngọc Chính, khóm 9, Sóc Trăng',
+            link: null,
+            type: 'place',
+            image: 'https://ticotravel.com.vn/wp-content/uploads/2024/08/chua-doi-1.jpg'
+          },
+          {
+            city: 'Sóc Trăng',
+            name: 'Chợ nổi sóc trăng',
+            address: null,
+            link: null,
+            type: 'place',
+            image: 'https://hoidisanvanhoa.vn/wp-content/uploads/2025/06/260724a2.jpg'
+          },
+          {
+            city: 'Sóc Trăng',
+            name: 'Liên hoa bảo tháp',
+            address: null,
+            link: null,
+            type: 'place',
+            image: 'https://i.ytimg.com/vi/UHTLrp_czbM/maxresdefault.jpg'
           }
         ]
       };
+      const IMG_MAP = {
+        'bánh cống cô út Nguyễn Trãi':
+          'https://images.squarespace-cdn.com/content/v1/5c2cf67d85ede1bbbf1c0348/1650935212145-GM4QMZB85R44U5I1D5UM/Banh+Cong+Can+Tho.jpg?format=2500w',
+        'lẩu mắm kiều trinh': 'https://beptruong.edu.vn/wp-content/uploads/2017/11/lau-mam.jpg',
+        'Pizza hủ tiếu':
+          'https://thuythuytravels.com/wp-content/uploads/2020/05/pizza-hu-tieu-can-tho.jpg',
+        'Chuối bếp nướng':
+          'https://file.hstatic.net/1000389344/file/chuoi-nep-nuong-1_38f0cc7782ea4d6da0c20be0e2294c05_1024x1024.jpg',
+        'Nem Nướng Cái Răng Cô Thu':
+          'https://www.seriouseats.com/thmb/p8X8y5xIis9BQ0y6VdC3lcxGekk=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/20221012-NemNuong-Shot4-LeHero-Beauty-4c8c5b6e0c0d4ac8b2abf27b5fb9b2f3.jpg',
+        'Lẩu vịt nấu chao cây trứng cá':
+          'https://images2.thanhnien.vn/528068263637045248/2023/6/22/z44379111096302075d34aad112c7f47acb3bfb8e0953c-16874223231381405093215.jpg',
+        'Chợ nổi cái răng':
+          'https://images2.thanhnien.vn/528068263637045248/2023/6/18/z4431900025484d2230729f33e31a74f5718cb8b5e4a65-16870795334302002786221.jpg',
+        'Nhà cổ Bình Thủy':
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Ancient_House_Binh_Thuy_002.jpg/640px-Ancient_House_Binh_Thuy_002.jpg',
+        'Cồn Sơn': 'https://dulichcantho.vn/wp-content/uploads/2021/04/con-son-2.jpg',
+        'Công viên bờ kè sông Hậu': 'https://media.vietravel.com/images/news/ct_bokeh_songhau.jpg',
+        'Chợ đêm cần thơ':
+          'https://ik.imagekit.io/tvlk/blog/2022/08/cho-dem-can-tho-1.jpg?tr=dpr-2,w-675',
+        'Bánh cống Đại Tâm':
+          'https://images.squarespace-cdn.com/content/v1/5c2cf67d85ede1bbbf1c0348/1650935212145-GM4QMZB85R44U5I1D5UM/Banh+Cong+Can+Tho.jpg?format=2500w',
+        'Bánh ống':
+          'https://afamilycdn.com/150157425591193600/2023/5/11/photo-1-16837804656462065013303.jpg',
+        'bánh ống':
+          'https://afamilycdn.com/150157425591193600/2023/5/11/photo-1-16837804656462065013303.jpg',
+        'bánh ống lá dứa':
+          'https://afamilycdn.com/150157425591193600/2023/5/11/photo-1-16837804656462065013303.jpg',
+        'Bún nước lèo':
+          'data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%27900%27%20height%3D%27600%27%3E%3Cdefs%3E%3ClinearGradient%20id%3D%27g%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23f6f7fb%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23e8eefc%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%27100%25%27%20height%3D%27100%25%27%20fill%3D%27url%28%23g%29%27/%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2745%25%27%20text-anchor%3D%27middle%27%20font-size%3D%2754%27%20font-family%3D%27Arial%27%20fill%3D%27%231f2a44%27%3EB%C3%BAn%20n%C6%B0%E1%BB%9Bc%20l%C3%A8o%3C/text%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2758%25%27%20text-anchor%3D%27middle%27%20font-size%3D%2726%27%20font-family%3D%27Arial%27%20fill%3D%27%233a4a6a%27%3E%E1%BA%A2nh%20minh%20ho%E1%BA%A1%3C/text%3E%3C/svg%3E',
+        'Bún Gỏi Dà':
+          'data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%27900%27%20height%3D%27600%27%3E%3Cdefs%3E%3ClinearGradient%20id%3D%27g%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23f6f7fb%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23e8eefc%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%27100%25%27%20height%3D%27100%25%27%20fill%3D%27url%28%23g%29%27/%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2745%25%27%20text-anchor%3D%27middle%27%20font-size%3D%2754%27%20font-family%3D%27Arial%27%20fill%3D%27%231f2a44%27%3EB%C3%BAn%20g%E1%BB%8Fi%20d%C3%A0%3C/text%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2758%25%27%20text-anchor%3D%27middle%27%20font-size%3D%2726%27%20font-family%3D%27Arial%27%20fill%3D%27%233a4a6a%27%3E%E1%BA%A2nh%20minh%20ho%E1%BA%A1%3C/text%3E%3C/svg%3E',
+        'Bò nướng ngói Sóc Trăng':
+          'data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%27900%27%20height%3D%27600%27%3E%3Cdefs%3E%3ClinearGradient%20id%3D%27g%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23fff6f0%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23ffe7d6%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%27100%25%27%20height%3D%27100%25%27%20fill%3D%27url%28%23g%29%27/%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2745%25%27%20text-anchor%3D%27middle%27%20font-size%3D%2754%27%20font-family%3D%27Arial%27%20fill%3D%27%234a2c1f%27%3EB%C3%B2%20n%C6%B0%E1%BB%9Bng%20ng%C3%B3i%3C/text%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2758%25%27%20text-anchor%3D%27middle%27%20font-size%3D%2726%27%20font-family%3D%27Arial%27%20fill%3D%27%236a3d2e%27%3E%E1%BA%A2nh%20minh%20ho%E1%BA%A1%3C/text%3E%3C/svg%3E',
+        'Chùa Dơi':
+          'data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%27900%27%20height%3D%27600%27%3E%3Cdefs%3E%3ClinearGradient%20id%3D%27g%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23f3fff6%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23dff7e7%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%27100%25%27%20height%3D%27100%25%27%20fill%3D%27url%28%23g%29%27/%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2745%25%27%20text-anchor%3D%27middle%27%20font-size%3D%2754%27%20font-family%3D%27Arial%27%20fill%3D%27%231f4a2c%27%3ECh%C3%B9a%20D%C6%A1i%3C/text%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2758%25%27%20text-anchor%3D%27middle%27%20font-size%3D%2726%27%20font-family%3D%27Arial%27%20fill%3D%27%232f6a3e%27%3E%E1%BA%A2nh%20minh%20ho%E1%BA%A1%3C/text%3E%3C/svg%3E',
+        'Chùa Chén Kiểu':
+          'data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%27900%27%20height%3D%27600%27%3E%3Cdefs%3E%3ClinearGradient%20id%3D%27g%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23f3f6ff%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23e1e6ff%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%27100%25%27%20height%3D%27100%25%27%20fill%3D%27url%28%23g%29%27/%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2745%25%27%20text-anchor%3D%27middle%27%20font-size%3D%2754%27%20font-family%3D%27Arial%27%20fill%3D%27%231f2a6a%27%3ECh%C3%B9a%20Ch%C3%A9n%20Ki%E1%BB%83u%3C/text%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2758%25%27%20text-anchor%3D%27middle%27%20font-size%3D%2726%27%20font-family%3D%27Arial%27%20fill%3D%27%2335429a%27%3E%E1%BA%A2nh%20minh%20ho%E1%BA%A1%3C/text%3E%3C/svg%3E',
+        'Liên hoa bảo tháp':
+          'data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%27900%27%20height%3D%27600%27%3E%3Cdefs%3E%3ClinearGradient%20id%3D%27g%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23fffdf3%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23fff0c9%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%27100%25%27%20height%3D%27100%25%27%20fill%3D%27url%28%23g%29%27/%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2745%25%27%20text-anchor%3D%27middle%27%20font-size%3D%2754%27%20font-family%3D%27Arial%27%20fill%3D%27%236a4c1f%27%3ELi%C3%AAn%20hoa%20b%E1%BA%A3o%20th%C3%A1p%3C/text%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2758%25%27%20text-anchor%3D%27middle%27%20font-size%3D%2726%27%20font-family%3D%27Arial%27%20fill%3D%27%238a6a2f%27%3E%E1%BA%A2nh%20minh%20ho%E1%BA%A1%3C/text%3E%3C/svg%3E',
+        'Chùa La Hán':
+          'data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%27900%27%20height%3D%27600%27%3E%3Cdefs%3E%3ClinearGradient%20id%3D%27g%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23f3fff9%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23d8fff0%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%27100%25%27%20height%3D%27100%25%27%20fill%3D%27url%28%23g%29%27/%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2745%25%27%20text-anchor%3D%27middle%27%20font-size%3D%2754%27%20font-family%3D%27Arial%27%20fill%3D%27%23166a4a%27%3ECh%C3%B9a%20La%20H%C3%A1n%3C/text%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2758%25%27%20text-anchor%3D%27middle%27%20font-size%3D%2726%27%20font-family%3D%27Arial%27%20fill%3D%27%231f8a66%27%3E%E1%BA%A2nh%20minh%20ho%E1%BA%A1%3C/text%3E%3C/svg%3E',
+        'Chùa Peam Buôl Thmây':
+          'data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%27900%27%20height%3D%27600%27%3E%3Cdefs%3E%3ClinearGradient%20id%3D%27g%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23f6f7fb%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23e8eefc%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%27100%25%27%20height%3D%27100%25%27%20fill%3D%27url%28%23g%29%27/%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2745%25%27%20text-anchor%3D%27middle%27%20font-size%3D%2746%27%20font-family%3D%27Arial%27%20fill%3D%27%231f2a44%27%3ECh%C3%B9a%20Peam%20Bu%C3%B4l%20Thm%C3%A2y%3C/text%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2758%25%27%20text-anchor%3D%27middle%27%20font-size%3D%2726%27%20font-family%3D%27Arial%27%20fill%3D%27%233a4a6a%27%3E%E1%BA%A2nh%20minh%20ho%E1%BA%A1%3C/text%3E%3C/svg%3E',
+        'Đường Hoa Kèn Hồng':
+          'data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%27900%27%20height%3D%27600%27%3E%3Cdefs%3E%3ClinearGradient%20id%3D%27g%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23fff6fb%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23ffe0f1%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%27100%25%27%20height%3D%27100%25%27%20fill%3D%27url%28%23g%29%27/%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2745%25%27%20text-anchor%3D%27middle%27%20font-size%3D%2754%27%20font-family%3D%27Arial%27%20fill%3D%27%237a1f5a%27%3E%C4%90%C6%B0%E1%BB%9Dng%20hoa%20k%C3%A8n%20h%E1%BB%93ng%3C/text%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2758%25%27%20text-anchor%3D%27middle%27%20font-size%3D%2726%27%20font-family%3D%27Arial%27%20fill%3D%27%239a3576%27%3E%E1%BA%A2nh%20minh%20ho%E1%BA%A1%3C/text%3E%3C/svg%3E',
+        'Chợ nổi sóc trăng':
+          'data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%27900%27%20height%3D%27600%27%3E%3Cdefs%3E%3ClinearGradient%20id%3D%27g%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23f2fbff%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23d9f0ff%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%27100%25%27%20height%3D%27100%25%27%20fill%3D%27url%28%23g%29%27/%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2745%25%27%20text-anchor%3D%27middle%27%20font-size%3D%2754%27%20font-family%3D%27Arial%27%20fill%3D%27%23145a7a%27%3ECh%E1%BB%A3%20n%E1%BB%95i%20S%C3%B3c%20Tr%C4%83ng%3C/text%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2758%25%27%20text-anchor%3D%27middle%27%20font-size%3D%2726%27%20font-family%3D%27Arial%27%20fill%3D%27%231f7a9a%27%3E%E1%BA%A2nh%20minh%20ho%E1%BA%A1%3C/text%3E%3C/svg%3E',
+        'Bánh pía': 'https://commons.wikimedia.org/wiki/Special:FilePath/B%C3%A1nh%20p%C3%ADa.jpg'
+      };
 
-      // --- Core Functions ---
+      const TABS = document.querySelectorAll('.tab');
+      const SECTIONS = ['itinerary', 'food', 'tips'].reduce((acc, k) => {
+        acc[k] = document.getElementById(k);
+        return acc;
+      }, {});
 
-      function switchDay(day) {
-        document.querySelectorAll('[id^="tab-day"]').forEach((btn) => {
-          btn.className =
-            'px-4 py-2 rounded font-bold transition bg-slate-100 text-slate-600 border-2 border-transparent whitespace-nowrap';
-        });
-        const activeBtn = document.getElementById(`tab-day${day}`);
-        activeBtn.className =
-          'px-4 py-2 rounded font-bold transition bg-amber-600 text-white shadow-md border-2 border-amber-600 whitespace-nowrap';
+      TABS.forEach((t) =>
+        t.addEventListener('click', () => {
+          TABS.forEach((x) => x.classList.remove('active'));
+          t.classList.add('active');
+          const key = t.dataset.tab;
+          Object.keys(SECTIONS).forEach(
+            (k) => (SECTIONS[k].style.display = k === key ? '' : 'none')
+          );
+        })
+      );
 
-        const container = document.getElementById('timeline-content');
-        container.innerHTML = '';
-
-        const data = itineraryData[day];
-        const accentColor = 'amber';
-
-        data.forEach((item, index) => {
-          const isLast = index === data.length - 1;
-          const optionalClass = item.isOptional ? 'item-optional' : '';
-
-          const html = `
-                    <div class="relative pl-8 ${isLast ? '' : 'pb-8'}">
-                        ${!isLast ? `<div class="absolute left-[-11px] top-2 h-full w-0.5 bg-${accentColor}-200"></div>` : ''}
-                        <div class="absolute left-[-24px] top-0 flex h-8 w-8 items-center justify-center rounded-full bg-white border-2 border-${accentColor}-500 text-lg z-10 shadow-sm">
-                            ${item.icon}
-                        </div>
-                        <div class="group relative rounded bg-white p-4 border border-slate-200 hover:shadow-md transition-all duration-200 hover:border-${accentColor}-400 ${optionalClass}">
-                            <span class="inline-block px-2 py-0.5 mb-2 text-xs font-bold text-${accentColor}-700 bg-${accentColor}-100 rounded">
-                                ${item.time}
-                            </span>
-                            <h3 class="text-lg font-bold text-slate-800">${item.title}</h3>
-                            <p class="mt-1 text-slate-600 text-sm leading-relaxed">${item.desc}</p>
-                        </div>
-                    </div>
-                `;
-          container.innerHTML += html;
-        });
+      function mapLink(addressOrQuery) {
+        if (!addressOrQuery) return null;
+        const q = encodeURIComponent(addressOrQuery);
+        return `https://www.google.com/maps/search/?api=1&query=${q}`;
       }
 
-      function renderFood(filterType) {
-        const grid = document.getElementById('food-grid');
-        grid.innerHTML = '';
-        const filtered =
-          filterType === 'all' ? foodData : foodData.filter((f) => f.type === filterType);
-
-        filtered.forEach((item) => {
-          const fallbackUrl = `https://via.placeholder.com/600x400/cbd5e1/475569?text=${encodeURIComponent(item.name)}`;
-          let linksHtml = '';
-          if (item.mapLink)
-            linksHtml += `<a href="${item.mapLink}" target="_blank" class="btn-icon bg-amber-100 text-amber-700 px-3 py-1.5 rounded-md text-xs font-bold hover:bg-amber-200">Chỉ Đường 🗺️</a>`;
-          if (item.tiktok)
-            linksHtml += `<a href="${item.tiktok}" target="_blank" class="btn-icon bg-black text-white px-3 py-1.5 rounded-md text-xs font-bold hover:bg-gray-800 ml-2">TikTok 🎵</a>`;
-
-          const card = `
-                    <div class="food-card bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-xl transition duration-300 flex flex-col h-full group relative">
-                        <div class="h-48 overflow-hidden relative bg-slate-200 img-skeleton">
-                             <img src="${item.img}" alt="${item.name}" 
-                                class="food-card-img w-full h-full object-cover opacity-0 transition-opacity duration-300"
-                                onload="this.classList.remove('opacity-0'); this.parentElement.classList.remove('img-skeleton');"
-                                onerror="this.onerror=null; this.src='${fallbackUrl}'; this.classList.remove('opacity-0'); this.parentElement.classList.remove('img-skeleton');">
-                        </div>
-                        <div class="p-5 flex flex-col flex-grow">
-                            <h4 class="text-lg font-bold text-slate-800 mb-1 group-hover:text-amber-600 transition">${item.name}</h4>
-                            <p class="text-xs text-slate-500 mb-2 font-medium italic truncate">📍 ${item.address}</p>
-                            <p class="text-sm text-slate-600 mb-4 flex-grow line-clamp-3">${item.desc}</p>
-                            <div class="flex flex-wrap gap-2 mb-3">${linksHtml}</div>
-                            <div class="text-xs text-slate-400 border-t pt-3 flex items-center justify-between mt-auto">
-                                <span class="text-amber-600 font-bold">${item.type === 'main' ? 'Món Chính' : 'Ăn Vặt'}</span>
-                                <button onclick="getFoodReview('${item.name}')" class="text-amber-600 hover:text-amber-700 font-bold text-xs flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-full border border-amber-200">AI Review ✨</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-          grid.innerHTML += card;
-        });
+      function placeholder(name, subtitle = 'Ảnh minh hoạ') {
+        const safe = (name || '').replace(/[<>&"]/g, '');
+        const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="900" height="600">
+          <defs>
+            <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#f6f7fb"/>
+              <stop offset="1" stop-color="#e8eefc"/>
+            </linearGradient>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#g)"/>
+          <text x="50%" y="45%" text-anchor="middle" font-size="54" font-family="Arial" fill="#1f2a44">${safe}</text>
+          <text x="50%" y="58%" text-anchor="middle" font-size="26" font-family="Arial" fill="#3a4a6a">${subtitle}</text>
+        </svg>`;
+        return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
       }
 
-      function filterFood(type) {
-        document.querySelectorAll('.food-filter-btn').forEach((btn) => {
-          btn.classList.remove('bg-slate-800', 'text-white');
-          btn.classList.add('bg-white', 'text-slate-600', 'border', 'border-slate-300');
-        });
-        event.target.classList.remove('bg-white', 'text-slate-600', 'border', 'border-slate-300');
-        event.target.classList.add('bg-slate-800', 'text-white');
-        renderFood(type);
+      function getImage(item) {
+        if (item.image) return item.image;
+        if (IMG_MAP[item.name]) return IMG_MAP[item.name];
+        return placeholder(item.name);
       }
 
-      function scrollToSection(id) {
-        const el = document.getElementById(id);
-        const navHeight = 80;
-        const y = el.getBoundingClientRect().top + window.pageYOffset - navHeight;
-        window.scrollTo({ top: y, behavior: 'smooth' });
-        document.getElementById('mobile-nav').classList.add('hidden');
-      }
+      // ---- Itinerary rendering ----
+      const timelineEl = document.getElementById('timeline');
+      let mode = 'mix'; // a | b | mix
 
-      function toggleMobileNav() {
-        document.getElementById('mobile-nav').classList.toggle('hidden');
-      }
-
-      // --- Chat & AI ---
-      function toggleChat() {
-        document.getElementById('chatWindow').style.display =
-          document.getElementById('chatWindow').style.display === 'flex' ? 'none' : 'flex';
-      }
-
-      async function sendMessage() {
-        const input = document.getElementById('userQuery');
-        const messages = document.getElementById('chatMessages');
-        const text = input.value.trim();
-        if (!text) return;
-        messages.innerHTML += `<div class="message user">${text}</div>`;
-        input.value = '';
-        messages.scrollTop = messages.scrollHeight;
-
-        const loadingId = 'loading-' + Date.now();
-        messages.innerHTML += `<div class="message ai typing-indicator" id="${loadingId}"><span></span><span></span><span></span></div>`;
-        messages.scrollTop = messages.scrollHeight;
-
-        const systemPrompt =
-          'Bạn là Thổ Địa Cần Thơ, chuyên gia phượt đường N2. Tư vấn ngắn gọn, vui vẻ.';
-        const response = await callGemini(text, systemPrompt);
-
-        document.getElementById(loadingId).remove();
-        messages.innerHTML += `<div class="message ai">${marked.parse(response)}</div>`;
-        messages.scrollTop = messages.scrollHeight;
-      }
-
-      function handleKeyPress(e) {
-        if (e.key === 'Enter') sendMessage();
-      }
-
-      async function getFoodReview(foodName) {
-        const modal = document.getElementById('reviewModal');
-        const content = document.getElementById('reviewContent');
-        document.getElementById('reviewTitle').innerText = `Review: ${foodName}`;
-        content.innerHTML = `<div class="flex justify-center p-10"><div class="typing-indicator"><span></span><span></span><span></span></div></div>`;
-        modal.style.display = 'flex';
-        const response = await callGemini(
-          `Review món ${foodName} ở Cần Thơ.`,
-          'Chuyên gia ẩm thực miền Tây. Review hấp dẫn.'
-        );
-        content.innerHTML = marked.parse(response);
-      }
-
-      function closeReview(e) {
-        if (!e || e.target.id === 'reviewModal' || e.target.tagName === 'BUTTON')
-          document.getElementById('reviewModal').style.display = 'none';
-      }
-
-      // --- Init ---
-      document.addEventListener('DOMContentLoaded', () => {
-        switchDay(0); // Load Day 0 first
-        renderFood('all');
-
-        new Chart(document.getElementById('budgetChart'), {
-          type: 'bar',
-          data: {
-            labels: ['Khách Sạn', 'Ăn Uống', 'Xăng Xe', 'Vé/Ghe', 'Dự Phòng'],
-            datasets: [
-              {
-                label: 'VND',
-                data: [1500000, 4200000, 600000, 700000, 600000],
-                backgroundColor: ['#64748B', '#F59E0B', '#10B981', '#06B6D4', '#94A3B8'],
-                borderRadius: 4
-              }
-            ]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              y: { beginAtZero: true, ticks: { callback: (v) => (v / 1000000).toFixed(1) + ' tr' } }
+      const itinerary = [
+        {
+          day: '30/1 (Trưa → Tối)',
+          meta: 'TP.HCM → Cần Thơ',
+          blocks: [
+            {
+              t: '12:00–13:00',
+              tag: 'ride',
+              plan: 'both',
+              text: 'Ăn trưa nhẹ, kiểm tra xe (lốp/phanh/đèn), đổ xăng đầy.'
             },
-            plugins: { legend: { display: false } }
-          }
+            {
+              t: '13:00–17:30',
+              tag: 'ride',
+              plan: 'both',
+              text: 'Chạy TP.HCM → Cần Thơ (nghỉ 1–2 lần). Ưu tiên tới nơi trước khi trời tối.'
+            },
+            {
+              t: '18:30–21:30',
+              tag: 'ct',
+              plan: 'a,mix',
+              text: 'Dạo <b>bờ kè sông Hậu</b> + <b>chợ đêm</b>. Ăn tối: lẩu mắm / nem nướng.'
+            },
+            {
+              t: '18:30–21:30',
+              tag: 'ct',
+              plan: 'b',
+              text: 'Tối vẫn ở Cần Thơ để nghỉ ngơi, ăn tối nhẹ (bánh cống/chuối nướng) để mai đi Sóc Trăng sớm.'
+            }
+          ]
+        },
+        {
+          day: '31/1 (Sáng → Tối)',
+          meta: 'Cần Thơ',
+          blocks: [
+            {
+              t: '05:30–08:30',
+              tag: 'ct',
+              plan: 'a,mix',
+              text: 'Đi <b>chợ nổi Cái Răng</b> (đi sớm cho đúng vibe). Thử <b>pizza hủ tiếu</b>, trái cây chợ nổi.'
+            },
+            {
+              t: '09:30–11:30',
+              tag: 'ct',
+              plan: 'a,mix',
+              text: 'Tham quan <b>Nhà cổ Bình Thủy</b> (nếu thích kiến trúc).'
+            },
+            {
+              t: '12:00–14:00',
+              tag: 'ct',
+              plan: 'a,mix',
+              text: 'Ăn trưa: <b>bánh cống</b> / <b>nem nướng</b>. Nghỉ trưa tránh nắng.'
+            },
+            {
+              t: '15:30–18:00',
+              tag: 'ct',
+              plan: 'a,mix',
+              text: 'Option: <b>Cồn Sơn</b> (vườn/miệt vườn) hoặc chill cà phê.'
+            },
+            {
+              t: '19:00–21:30',
+              tag: 'ct',
+              plan: 'a,mix',
+              text: 'Ăn tối: <b>lẩu vịt nấu chao</b> hoặc <b>lẩu mắm</b>. Đi dạo bờ kè.'
+            },
+            {
+              t: '19:00–21:30',
+              tag: 'ct',
+              plan: 'b',
+              text: 'Ngủ sớm để 1/2 đi Sóc Trăng. Tối ăn nhẹ tại Cần Thơ.'
+            }
+          ]
+        },
+        {
+          day: '1/2 (Ngày quyết định)',
+          meta: 'Ở Cần Thơ hoặc rẽ Sóc Trăng',
+          blocks: [
+            {
+              t: '08:00–11:30',
+              tag: 'ct',
+              plan: 'a',
+              text: 'Ở lại Cần Thơ: quay lại điểm bạn thích / ăn thêm (chuối nướng, phố nướng…).'
+            },
+            {
+              t: '11:30–13:30',
+              tag: 'ride',
+              plan: 'b,mix',
+              text: 'Chạy Cần Thơ → Sóc Trăng (1.5–2h). Check-in, nghỉ ngơi.'
+            },
+            {
+              t: '14:30–18:00',
+              tag: 'st',
+              plan: 'b,mix',
+              text: 'Tham quan cụm chùa: <b>Chùa Dơi</b> → <b>Chùa Chén Kiểu</b> (tuỳ giờ).'
+            },
+            {
+              t: '19:00–21:30',
+              tag: 'st',
+              plan: 'b,mix',
+              text: 'Ăn tối Sóc Trăng: <b>bún nước lèo</b> / <b>bún gỏi dà</b> / bò nướng ngói.'
+            },
+            {
+              t: '19:00–21:30',
+              tag: 'ct',
+              plan: 'a',
+              text: 'Nếu vẫn ở Cần Thơ: tối đi chợ đêm + ăn lẩu mắm/đồ nướng.'
+            }
+          ]
+        },
+        {
+          day: '2/2 (Sáng → 16:00)',
+          meta: 'Về TP.HCM',
+          blocks: [
+            {
+              t: '06:30–07:00',
+              tag: 'ride',
+              plan: 'b,mix',
+              text: 'Nếu ngủ Sóc Trăng: xuất phát sớm về TP.HCM (buffer kẹt xe).'
+            },
+            {
+              t: '07:30–08:00',
+              tag: 'ride',
+              plan: 'a',
+              text: 'Nếu ngủ Cần Thơ: xuất phát về TP.HCM.'
+            },
+            {
+              t: '12:30–16:00',
+              tag: 'ride',
+              plan: 'both',
+              text: 'Về tới TP.HCM trước 16:00. Nghỉ dọc đường nếu mệt.'
+            }
+          ]
+        }
+      ];
+
+      function planBadges(tag) {
+        if (tag === 'ct') return `<span class="badge accent">Cần Thơ</span>`;
+        if (tag === 'st') return `<span class="badge alt">Sóc Trăng</span>`;
+        if (tag === 'ride') return `<span class="badge warn">Di chuyển</span>`;
+        return '';
+      }
+
+      function isShown(block) {
+        if (block.plan === 'both') return true;
+        const plans = block.plan.split(',');
+        return plans.includes(mode);
+      }
+
+      function renderTimeline() {
+        timelineEl.innerHTML = '';
+        itinerary.forEach((d) => {
+          const day = document.createElement('div');
+          day.className = 'day';
+          day.innerHTML = `
+          <div class="dhd">
+            <div class="dtitle">${d.day}</div>
+            <div class="dmeta">${d.meta}</div>
+          </div>
+        `;
+          d.blocks.filter(isShown).forEach((b) => {
+            const el = document.createElement('div');
+            el.className = 'block';
+            el.innerHTML = `
+            <div class="time">${b.t}</div>
+            <div class="desc">${planBadges(b.tag)}${b.text}</div>
+          `;
+            day.appendChild(el);
+          });
+          timelineEl.appendChild(day);
         });
-      });
+      }
+
+      document.getElementById('pickA').onclick = () => {
+        mode = 'a';
+        renderTimeline();
+      };
+      document.getElementById('pickB').onclick = () => {
+        mode = 'b';
+        renderTimeline();
+      };
+      document.getElementById('pickMix').onclick = () => {
+        mode = 'mix';
+        renderTimeline();
+      };
+      document.getElementById('reset').onclick = () => {
+        mode = 'mix';
+        renderTimeline();
+      };
+      renderTimeline();
+
+      // ---- Items rendering ----
+      const itemsEl = document.getElementById('items');
+      const qEl = document.getElementById('q');
+      let cityFilter = 'all';
+      let typeFilter = 'all';
+
+      const chips = document.querySelectorAll('.chip');
+      chips.forEach((c) =>
+        c.addEventListener('click', () => {
+          // toggle behavior: city chips are exclusive; type chips are exclusive
+          const city = c.dataset.city;
+          const type = c.dataset.type;
+
+          if (city) {
+            cityFilter = city;
+            document
+              .querySelectorAll('.chip[data-city]')
+              .forEach((x) => x.classList.remove('active'));
+            c.classList.add('active');
+          }
+          if (type) {
+            typeFilter = typeFilter === type ? 'all' : type;
+            document
+              .querySelectorAll('.chip[data-type]')
+              .forEach((x) => x.classList.remove('active'));
+            if (typeFilter !== 'all') c.classList.add('active');
+          }
+          renderItems();
+        })
+      );
+
+      function normalize(s) {
+        return (s || '')
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/\p{Diacritic}/gu, '');
+      }
+
+      function match(item, q) {
+        if (!q) return true;
+        const hay = normalize([item.name, item.address].filter(Boolean).join(' '));
+        return hay.includes(normalize(q));
+      }
+
+      function renderItems() {
+        const q = qEl.value.trim();
+        const all = [...DATA.canTho, ...DATA.socTrang].map((x) => ({ ...x }));
+        const filtered = all.filter((it) => {
+          if (cityFilter !== 'all' && it.city !== cityFilter) return false;
+          if (typeFilter !== 'all' && it.type !== typeFilter) return false;
+          return match(it, q);
+        });
+
+        itemsEl.innerHTML = '';
+        filtered.forEach((it) => {
+          const img = getImage(it);
+          const addr = it.address || '—';
+          const mlink = mapLink(it.address || it.name);
+          const card = document.createElement('div');
+          card.className = 'item';
+          card.innerHTML = `
+          <img src="${img}" alt="${it.name}" loading="lazy"/>
+          <div class="ibd">
+            <div class="name">${it.name} <span style="color:var(--muted);font-size:12px;">· ${it.city}</span></div>
+            <div class="addr">${addr}</div>
+            <div class="actions">
+              ${mlink ? `<a class="linkbtn" href="${mlink}" target="_blank" rel="noopener">🗺️ Map</a>` : ``}
+              ${it.link ? `<a class="linkbtn" href="${it.link}" target="_blank" rel="noopener">▶️ TikTok</a>` : ``}
+              <span class="linkbtn" style="opacity:.8">${it.type === 'food' ? '🍜 Món ăn' : '📍 Đi chơi'}</span>
+            </div>
+          </div>
+        `;
+          // fallback if remote image blocked
+          const imgEl = card.querySelector('img');
+          imgEl.addEventListener('error', () => {
+            imgEl.src = placeholder(it.name);
+          });
+          itemsEl.appendChild(card);
+        });
+      }
+
+      qEl.addEventListener('input', renderItems);
+      renderItems();
     </script>
   </body>
 </html>
